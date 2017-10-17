@@ -19,12 +19,27 @@ android {
     }
 }
 
+ext {
+    supportLib = '25.3.1'
+    retrofit = '2.3.0'
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:25.3.1'
+
+    // Android support libs
+    compile 'com.android.support:appcompat-v7:' + supportLib
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+
+    // Retrofit - HTTP client
+    compile 'com.squareup.retrofit2:retrofit:' + retrofit
+    // Gson converter to convert json to java object
+    compile 'com.squareup.retrofit2:converter-gson:' + retrofit
+    // Interceptor to Logs HTTP request and response data
+    compile 'com.squareup.okhttp3:logging-interceptor:3.9.0'
+
     testCompile 'junit:junit:4.12'
 }
