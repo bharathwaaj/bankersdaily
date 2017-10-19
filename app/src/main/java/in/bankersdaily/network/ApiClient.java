@@ -8,6 +8,7 @@ import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import in.bankersdaily.R;
@@ -19,6 +20,7 @@ import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.QueryMap;
 
 public class ApiClient {
 
@@ -27,7 +29,6 @@ public class ApiClient {
     /**
      * Query Params
      */
-    public static final String PAGE = "page";
     public static final String ORDER = "order";
 
     private final Retrofit retrofit;
@@ -69,8 +70,8 @@ public class ApiClient {
         return retrofit.create(RetrofitService.class);
     }
 
-    public RetrofitCall<List<Post>> getPosts() {
-        return getRetrofitService().getPosts();
+    public RetrofitCall<List<Post>> getPosts(@QueryMap Map<String, Object> params) {
+        return getRetrofitService().getPosts(params);
     }
 
 }
