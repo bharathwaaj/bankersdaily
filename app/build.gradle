@@ -1,8 +1,9 @@
 apply plugin: 'com.android.application'
+apply plugin: 'org.greenrobot.greendao'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "26.0.1"
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "in.bankersdaily"
         minSdkVersion 15
@@ -40,6 +41,9 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:' + retrofit
     // Interceptor to Logs HTTP request and response data
     compile 'com.squareup.okhttp3:logging-interceptor:3.9.0'
+
+    // GreenDao - Maps objects to SQLite databases.
+    compile 'org.greenrobot:greendao:3.2.2'
 
     testCompile 'junit:junit:4.12'
 }

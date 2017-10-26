@@ -8,11 +8,14 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import in.bankersdaily.BankersDailyApp;
 import in.bankersdaily.R;
+import in.bankersdaily.model.DaoSession;
 import in.bankersdaily.model.Post;
 import in.bankersdaily.network.ApiClient;
 import in.bankersdaily.network.PostPager;
 import in.bankersdaily.network.RetrofitException;
+import in.bankersdaily.util.FormatDate;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -38,7 +41,14 @@ public class MainActivity extends AppCompatActivity {
             } catch (RetrofitException e) {
                 e.printStackTrace();
             }
+            DaoSession daoSession = BankersDailyApp.getDaoSession(MainActivity.this);
+            daoSession.getPostDao().insertOrReplaceInTx(posts);
             Log.e("posts.size", "" + posts.size());
+            for (Post post : posts) {
+                Log.d("post-title:", post.getTitle() + "");
+                Log.d("Date:", FormatDate.getISODateString(post.getDate()));
+                Log.d("Date:", post.getDate().toString());
+            }
             return posts;
         }
 

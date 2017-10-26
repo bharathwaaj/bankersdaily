@@ -7,12 +7,15 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import in.bankersdaily.R;
+import in.bankersdaily.model.DateDeserializer;
 import in.bankersdaily.model.Post;
+import in.bankersdaily.model.PostDeserializer;
 import in.bankersdaily.util.Assert;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -35,9 +38,8 @@ public class ApiClient {
 
     public ApiClient(final Context context) {
         Assert.assertNotNull("Context must not be null.", context);
-        Gson gson = new GsonBuilder()
-                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+        Gson gson = getGsonBuilder()
+                .registerTypeAdapter(Post.class, new PostDeserializer())
                 .create();
 
         // Set headers for all network requests
@@ -64,6 +66,12 @@ public class ApiClient {
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .client(httpClient.build())
                 .build();
+    }
+
+    public static GsonBuilder getGsonBuilder() {
+        return new GsonBuilder()
+                .registerTypeAdapter(Date.class, new DateDeserializer())
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
     }
 
     private RetrofitService getRetrofitService() {
