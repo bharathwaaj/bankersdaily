@@ -14,7 +14,7 @@ import retrofit2.Response;
  *
  * @param <E>
  */
-abstract class BaseResourcePager<E> {
+public abstract class BaseResourcePager<E> {
 
     private static final String TOTAL_PAGES_HEADER = "X-WP-TotalPages";
     private static final String PAGE = "page";

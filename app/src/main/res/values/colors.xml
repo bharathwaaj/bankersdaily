@@ -3,6 +3,10 @@
 
     <color name="colorPrimary">#0086cc</color>
     <color name="colorPrimaryDark">#006399</color>
-    <color name="colorAccent">#FF4081</color>
+
+    <color name="black_text">#333333</color>
+
+    <color name="actionbar_text">#fff</color>
+    <color name="button_text_color">#fff</color>
 
 </resources>
