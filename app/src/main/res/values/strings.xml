@@ -16,5 +16,7 @@
 
     <string name="no_posts">No Articles</string>
     <string name="no_posts_description">There are no articles right now.</string>
-    
+
+    <string name="new_posts_available">\u21BB New Posts Available</string>
+
 </resources>

@@ -15,10 +15,10 @@ public class Post {
 
     @Expose @Id private Long id;
 
-    @Expose @SerializedName("date_gmt")
+    @Expose @SerializedName("date")
     @Property private Date date;
 
-    @Expose @SerializedName("modified_gmt")
+    @Expose @SerializedName("modified")
     @Property private Date modified;
 
     @Expose @Property private String status;

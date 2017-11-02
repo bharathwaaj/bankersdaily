@@ -16,6 +16,7 @@ import retrofit2.Response;
  */
 public abstract class BaseResourcePager<E> {
 
+    private static final String TOTAL_ITEMS_HEADER = "X-WP-Total";
     private static final String TOTAL_PAGES_HEADER = "X-WP-TotalPages";
     private static final String PAGE = "page";
     private static final String PER_PAGE = "per_page";
@@ -154,7 +155,7 @@ public abstract class BaseResourcePager<E> {
 
     public boolean hasNext() {
         return response == null ||
-                Integer.parseInt(response.headers().get(TOTAL_PAGES_HEADER)) > page;
+                Integer.parseInt(response.headers().get(TOTAL_PAGES_HEADER)) >= page;
     }
 
     /**
@@ -186,6 +187,10 @@ public abstract class BaseResourcePager<E> {
      */
     protected E register(final E resource) {
         return resource;
+    }
+
+    public int getTotalCount() {
+        return Integer.parseInt(response.headers().get(TOTAL_ITEMS_HEADER));
     }
 
     /**

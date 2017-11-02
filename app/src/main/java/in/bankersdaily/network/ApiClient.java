@@ -29,10 +29,14 @@ public class ApiClient {
 
     static final String POSTS_PATH= "wp-json/wp/v2/posts/";
 
+    public static final String TIME_ZONE = "GMT+05:30";
+
     /**
      * Query Params
      */
     public static final String ORDER = "order";
+    public static final String AFTER = "after";
+    public static final String BEFORE = "before";
 
     private final Retrofit retrofit;
 

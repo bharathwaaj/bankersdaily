@@ -7,6 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
+import in.bankersdaily.network.ApiClient;
+
 public class FormatDate {
 
     private static final String ABBREV_DAY = "d ago";
@@ -16,7 +18,7 @@ public class FormatDate {
     @SuppressLint("SimpleDateFormat")
     public static String getISODateString(Date date) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone(ApiClient.TIME_ZONE));
         return simpleDateFormat.format(date);
     }
 

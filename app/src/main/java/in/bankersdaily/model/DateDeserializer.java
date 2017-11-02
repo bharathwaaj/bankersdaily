@@ -13,6 +13,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
+import in.bankersdaily.network.ApiClient;
+
 /**
  * Use to parse date string from json & map to Date field, since timezone is not available in
  * Wordpress API date format, Gson can't parse it. So, parse the date using SimpleDateFormat with
@@ -27,7 +29,7 @@ public class DateDeserializer implements JsonDeserializer<Date> {
             throws JsonParseException {
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        formatter.setTimeZone(TimeZone.getTimeZone(ApiClient.TIME_ZONE));
         try {
             return formatter.parse(element.getAsString());
         } catch (ParseException e) {
