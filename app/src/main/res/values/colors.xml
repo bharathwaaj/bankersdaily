@@ -5,8 +5,13 @@
     <color name="colorPrimaryDark">#006399</color>
 
     <color name="black_text">#333333</color>
+    <color name="white">#FFFFFF</color>
 
     <color name="actionbar_text">#fff</color>
     <color name="button_text_color">#fff</color>
+
+    <color name="tab_text_color">#888888</color>
+    <color name="tab_background_color">@color/white</color>
+    <color name="tab_indicator_color">@color/colorPrimary</color>
 
 </resources>

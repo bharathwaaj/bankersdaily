@@ -13,6 +13,8 @@ import in.bankersdaily.R;
  */
 public abstract class BaseToolBarActivity extends AppCompatActivity {
 
+    public static final String ACTIONBAR_TITLE = "title";
+
     @Override
     public void setContentView(final int layoutResId) {
         super.setContentView(layoutResId);

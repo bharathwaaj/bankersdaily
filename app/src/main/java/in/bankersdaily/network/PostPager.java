@@ -22,6 +22,7 @@ public class PostPager extends BaseResourcePager<Post> {
 
     @Override
     public Response<List<Post>> getItems(int page, int size) throws IOException {
+        queryParams.put(ApiClient.EMBED, "1");
         return apiClient.getPosts(queryParams).execute();
     }
 

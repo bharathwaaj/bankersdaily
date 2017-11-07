@@ -19,4 +19,10 @@
 
     <string name="new_posts_available">\u21BB New Posts Available</string>
 
+    <string name="latest_articles">Latest articles</string>
+    <string name="categories">Categories</string>
+
+    <string name="no_categories">No Categories</string>
+    <string name="no_categories_description">There are no categories right now.</string>
+    
 </resources>

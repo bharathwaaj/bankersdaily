@@ -18,6 +18,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".ui.CategoryListActivity"
+            android:configChanges="orientation|keyboard|screenSize" />
+
+        <activity android:name=".ui.PostListActivity"
+            android:configChanges="orientation|keyboard|screenSize" />
+
     </application>
 
 </manifest>

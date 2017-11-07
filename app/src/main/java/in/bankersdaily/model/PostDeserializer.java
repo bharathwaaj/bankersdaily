@@ -6,8 +6,10 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.util.List;
 
 import in.bankersdaily.network.ApiClient;
 
@@ -31,10 +33,19 @@ public class PostDeserializer implements JsonDeserializer<Post> {
         Post post = gson.fromJson(json, Post.class);
         post.setTitle(getRenderedString(jsonObject, "title"));
         post.setContent(getRenderedString(jsonObject, "content"));
+
+        JsonElement categoriesJson =
+                jsonObject.getAsJsonObject("_embedded").getAsJsonArray("wp:term").get(0);
+
+        gson = ApiClient.getGsonBuilder().create();
+
+        Type type = new TypeToken<List<Category>>(){}.getType();
+        List<Category> categories = gson.fromJson(categoriesJson, type);
+        post.setCategories(categories);
         return post;
     }
 
     private String getRenderedString(JsonObject jsonObject, String key) {
-        return jsonObject.getAsJsonObject().getAsJsonObject(key).get("rendered").getAsString();
+        return jsonObject.getAsJsonObject(key).get("rendered").getAsString();
     }
 }

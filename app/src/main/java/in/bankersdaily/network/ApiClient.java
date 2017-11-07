@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import in.bankersdaily.R;
+import in.bankersdaily.model.Category;
 import in.bankersdaily.model.DateDeserializer;
 import in.bankersdaily.model.Post;
 import in.bankersdaily.model.PostDeserializer;
@@ -27,7 +28,9 @@ import retrofit2.http.QueryMap;
 
 public class ApiClient {
 
-    static final String POSTS_PATH= "wp-json/wp/v2/posts/";
+    static final String POSTS_PATH = "wp-json/wp/v2/posts/";
+
+    static final String CATEGORIES_PATH = "wp-json/wp/v2/categories/";
 
     public static final String TIME_ZONE = "GMT+05:30";
 
@@ -37,6 +40,8 @@ public class ApiClient {
     public static final String ORDER = "order";
     public static final String AFTER = "after";
     public static final String BEFORE = "before";
+    public static final String CATEGORY = "categories";
+    public static final String EMBED = "_embed";
 
     private final Retrofit retrofit;
 
@@ -84,6 +89,10 @@ public class ApiClient {
 
     public RetrofitCall<List<Post>> getPosts(@QueryMap Map<String, Object> params) {
         return getRetrofitService().getPosts(params);
+    }
+
+    public RetrofitCall<List<Category>> getCategories(@QueryMap Map<String, Object> params) {
+        return getRetrofitService().getCategories(params);
     }
 
 }
