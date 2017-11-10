@@ -37,6 +37,8 @@ public class Post {
 
     @Property private String content;
 
+    @Property private String featuredMedia;
+
     @ToMany
     @JoinEntity(
             entity = JoinPostsWithCategories.class,
@@ -53,9 +55,9 @@ public class Post {
     @Generated(hash = 572315894)
     private transient PostDao myDao;
 
-    @Generated(hash = 317692016)
+    @Generated(hash = 587973530)
     public Post(Long id, Date date, Date modified, String slug, String status, String link,
-            String title, String content) {
+            String title, String content, String featuredMedia) {
         this.id = id;
         this.date = date;
         this.modified = modified;
@@ -64,6 +66,7 @@ public class Post {
         this.link = link;
         this.title = title;
         this.content = content;
+        this.featuredMedia = featuredMedia;
     }
 
     @Generated(hash = 1782702645)
@@ -132,6 +135,14 @@ public class Post {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getFeaturedMedia() {
+        return this.featuredMedia;
+    }
+
+    public void setFeaturedMedia(String featuredMedia) {
+        this.featuredMedia = featuredMedia;
     }
 
     /**

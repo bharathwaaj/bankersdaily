@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.text.Html;
 import android.view.View;
 
+import com.bumptech.glide.Glide;
+
 import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.List;
@@ -53,7 +55,7 @@ public class PostListAdapter extends SingleTypeAdapter<Post> {
     @Override
     protected int[] getChildViewIds() {
         return new int[] { R.id.title, R.id.date, R.id.category_layout, R.id.category,
-                R.id.ripple_layout };
+                R.id.ripple_layout, R.id.image_view };
     }
 
     @Override
@@ -64,6 +66,12 @@ public class PostListAdapter extends SingleTypeAdapter<Post> {
 
     @Override
     protected void update(final int position, final Post post) {
+        Glide.with(activity)
+                .load(post.getFeaturedMedia())
+                .placeholder(R.drawable.placeholder_icon)
+                .error(R.mipmap.ic_launcher)
+                .into(imageView(5));
+
         setText(0, Html.fromHtml(post.getTitle()));
         setText(1, FormatDate.getAbbreviatedTimeSpan(post.getDate().getTime()));
         if (post.getCategories().isEmpty()) {

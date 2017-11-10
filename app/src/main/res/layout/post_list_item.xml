@@ -8,7 +8,7 @@
     
     <in.bankersdaily.ui.MaterialRippleLayout
         android:id="@+id/ripple_layout"
-        android:paddingTop="25dp"
+        android:paddingTop="22dp"
         android:paddingLeft="20dp"
         android:paddingRight="15dp"
         android:paddingBottom="23dp"
@@ -20,9 +20,18 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+            
+            <ImageView
+                android:id="@+id/image_view"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="15dp"
+                android:src="@mipmap/ic_launcher" />
 
             <TextView
                 android:id="@+id/title"
+                android:layout_toRightOf="@id/image_view"
                 android:layout_width="match_parent"
                 android:textSize="16sp"
                 android:textColor="@color/black_text"
@@ -42,6 +51,7 @@
                 android:layout_height="20dp"
                 android:gravity="center_vertical"
                 android:layout_below="@id/title"
+                android:layout_toRightOf="@id/image_view"
                 android:orientation="horizontal">
 
                 <ImageView

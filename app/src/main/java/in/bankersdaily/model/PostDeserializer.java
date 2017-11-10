@@ -34,14 +34,23 @@ public class PostDeserializer implements JsonDeserializer<Post> {
         post.setTitle(getRenderedString(jsonObject, "title"));
         post.setContent(getRenderedString(jsonObject, "content"));
 
-        JsonElement categoriesJson =
-                jsonObject.getAsJsonObject("_embedded").getAsJsonArray("wp:term").get(0);
-
+        JsonObject embedded = jsonObject.getAsJsonObject("_embedded");
+        JsonElement categoriesJson = embedded.getAsJsonArray("wp:term").get(0);
         gson = ApiClient.getGsonBuilder().create();
-
         Type type = new TypeToken<List<Category>>(){}.getType();
         List<Category> categories = gson.fromJson(categoriesJson, type);
         post.setCategories(categories);
+
+        if (embedded.has("wp:featuredmedia")) {
+            JsonObject imageSizes = embedded.getAsJsonArray("wp:featuredmedia")
+                    .get(0).getAsJsonObject()
+                    .getAsJsonObject("media_details")
+                    .getAsJsonObject("sizes");
+
+            String imageSizeField = imageSizes.has("gazana_mini") ? "gazana_mini" : "full";
+            post.setFeaturedMedia(
+                    imageSizes.getAsJsonObject(imageSizeField).get("source_url").getAsString());
+        }
         return post;
     }
 
