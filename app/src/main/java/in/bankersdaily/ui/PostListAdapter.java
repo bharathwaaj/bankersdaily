@@ -1,7 +1,9 @@
 package in.bankersdaily.ui;
 
-import android.content.Context;
+import android.app.Activity;
+import android.content.Intent;
 import android.text.Html;
+import android.view.View;
 
 import org.greenrobot.greendao.query.QueryBuilder;
 
@@ -18,18 +20,18 @@ import in.bankersdaily.util.SingleTypeAdapter;
 
 public class PostListAdapter extends SingleTypeAdapter<Post> {
 
-    private Context context;
+    private Activity activity;
     private PostDao postDao;
     private int categoryId;
     private int count;
     private QueryBuilder<Post> queryBuilder;
 
-    PostListAdapter(final Context context, final PostDao postDao, int categoryId) {
-        super(context, R.layout.post_list_item);
-        this.context = context;
+    PostListAdapter(Activity activity, PostDao postDao, int categoryId) {
+        super(activity, R.layout.post_list_item);
+        this.activity = activity;
         this.postDao = postDao;
         this.categoryId = categoryId;
-        queryBuilder = getQueryBuilder();
+        queryBuilder = Post.getPostListQueryBuilder(postDao, categoryId);
         count = (int) queryBuilder.count();
     }
 
@@ -43,16 +45,6 @@ public class PostListAdapter extends SingleTypeAdapter<Post> {
         return queryBuilder.listLazy().get(position);
     }
 
-    private QueryBuilder<Post> getQueryBuilder() {
-        QueryBuilder<Post> queryBuilder = postDao.queryBuilder().orderDesc(PostDao.Properties.Date);
-        if (categoryId != 0) {
-            queryBuilder
-                    .join(JoinPostsWithCategories.class, JoinPostsWithCategoriesDao.Properties.PostId)
-                    .where(JoinPostsWithCategoriesDao.Properties.CategoryId.eq(categoryId));
-        }
-        return queryBuilder;
-    }
-
     @Override
     public long getItemId(int position) {
         return getItem(position).getId();
@@ -60,12 +52,13 @@ public class PostListAdapter extends SingleTypeAdapter<Post> {
 
     @Override
     protected int[] getChildViewIds() {
-        return new int[] { R.id.title, R.id.date, R.id.category_layout, R.id.category };
+        return new int[] { R.id.title, R.id.date, R.id.category_layout, R.id.category,
+                R.id.ripple_layout };
     }
 
     @Override
     public void notifyDataSetChanged() {
-        count = (int) getQueryBuilder().count();
+        count = (int) queryBuilder.count();
         super.notifyDataSetChanged();
     }
 
@@ -87,6 +80,16 @@ public class PostListAdapter extends SingleTypeAdapter<Post> {
             }
             setText(3, categoryString);
         }
+        view(4).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(activity, PostDetailActivity.class);
+                intent.putExtra(PostDetailActivity.POST_POSITION, position);
+                intent.putExtra(BaseToolBarActivity.ACTIONBAR_TITLE, post.getTitle());
+                intent.putExtra(PostsListFragment.CATEGORY_ID, categoryId);
+                activity.startActivity(intent);
+            }
+        });
     }
 
 }

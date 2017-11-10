@@ -25,6 +25,10 @@
         <activity android:name=".ui.PostListActivity"
             android:configChanges="orientation|keyboard|screenSize" />
 
+        <activity android:name=".ui.PostDetailActivity"
+            android:label="@string/article"
+            android:configChanges="orientation|keyboard|screenSize" />
+
     </application>
 
 </manifest>

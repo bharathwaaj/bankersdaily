@@ -18,9 +18,13 @@ package in.bankersdaily.util;
 
 import android.app.Activity;
 import android.graphics.Typeface;
+import android.support.annotation.StringRes;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
+
+import in.bankersdaily.R;
 
 import static android.view.View.GONE;
 import static android.view.View.INVISIBLE;
@@ -84,6 +88,15 @@ public class ViewUtils {
         for (TextView view : textViews) {
             view.setTypeface(typeface);
         }
+    }
+
+    public static AlertDialog.Builder getAlertDialog(final Activity activity, @StringRes int title,
+                                                     @StringRes int messageRes) {
+
+        return new AlertDialog.Builder(activity, R.style.AppCompatAlertDialogStyle)
+                .setTitle(title)
+                .setMessage(messageRes)
+                .setNegativeButton(R.string.ok, null);
     }
 
     private ViewUtils() {

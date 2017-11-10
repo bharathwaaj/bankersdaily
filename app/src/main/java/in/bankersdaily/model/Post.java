@@ -10,6 +10,7 @@ import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.JoinEntity;
 import org.greenrobot.greendao.annotation.Property;
 import org.greenrobot.greendao.annotation.ToMany;
+import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.Date;
 import java.util.List;
@@ -28,6 +29,7 @@ public class Post {
     @Expose @SerializedName("modified")
     @Property private Date modified;
 
+    @Expose @Property private String slug;
     @Expose @Property private String status;
     @Expose @Property private String link;
 
@@ -51,12 +53,13 @@ public class Post {
     @Generated(hash = 572315894)
     private transient PostDao myDao;
 
-    @Generated(hash = 1208912888)
-    public Post(Long id, Date date, Date modified, String status, String link,
+    @Generated(hash = 317692016)
+    public Post(Long id, Date date, Date modified, String slug, String status, String link,
             String title, String content) {
         this.id = id;
         this.date = date;
         this.modified = modified;
+        this.slug = slug;
         this.status = status;
         this.link = link;
         this.title = title;
@@ -89,6 +92,14 @@ public class Post {
 
     public void setModified(Date modified) {
         this.modified = modified;
+    }
+
+    public String getSlug() {
+        return this.slug;
+    }
+
+    public void setSlug(String slug) {
+        this.slug = slug;
     }
 
     public String getStatus() {
@@ -189,6 +200,16 @@ public class Post {
             throw new DaoException("Entity is detached from DAO context");
         }
         myDao.update(this);
+    }
+
+    public static QueryBuilder<Post> getPostListQueryBuilder(PostDao postDao, int categoryId) {
+        QueryBuilder<Post> queryBuilder = postDao.queryBuilder().orderDesc(PostDao.Properties.Date);
+        if (categoryId != 0) {
+            queryBuilder
+                    .join(JoinPostsWithCategories.class, JoinPostsWithCategoriesDao.Properties.PostId)
+                    .where(JoinPostsWithCategoriesDao.Properties.CategoryId.eq(categoryId));
+        }
+        return queryBuilder;
     }
 
     /** called by internal mechanisms, do not call yourself. */
