@@ -88,8 +88,13 @@ public class PostsListFragment extends BaseDBPagedItemFragment<Post, Long> {
         JoinPostsWithCategoriesDao joiningDao = daoSession.getJoinPostsWithCategoriesDao();
         for (int i = 0; i < posts.size(); i++) {
             Post post = posts.get(i);
-            categoryDao.insertOrReplaceInTx(post.getCategories());
             for (Category category : post.getCategories()) {
+                List<Category> categories = categoryDao.queryBuilder()
+                        .where(CategoryDao.Properties.Id.eq(category.getId())).list();
+
+                if (categories.isEmpty()) {
+                    categoryDao.insertOrReplaceInTx(category);
+                }
                 joiningDao.insertOrReplace(new JoinPostsWithCategories(post.getId(), category.getId()));
             }
             FetchedPostsTracker latestPostTracker = getFetchedPostsTracker(Post.LATEST);
