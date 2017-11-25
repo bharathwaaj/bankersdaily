@@ -12,8 +12,8 @@ public class HomeTabPagerAdapter extends FragmentPagerAdapter {
     private final Resources resources;
     private Bundle bundle;
 
-    public HomeTabPagerAdapter(final Resources resources, final FragmentManager fragmentManager,
-                               Bundle bundle) {
+    HomeTabPagerAdapter(final Resources resources, final FragmentManager fragmentManager,
+                        Bundle bundle) {
         super(fragmentManager);
         this.resources = resources;
         this.bundle = bundle;
@@ -21,7 +21,7 @@ public class HomeTabPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 2;
+        return 3;
     }
 
     @Override
@@ -43,20 +43,24 @@ public class HomeTabPagerAdapter extends FragmentPagerAdapter {
                 bundle.putInt(CategoryListFragment.PARENT_ID, 0);
                 fragment.setArguments(bundle);
                 break;
+            case 2:
+                fragment = new BookmarkedPostsListFragment();
+                break;
             default:
                 break;
         }
         return fragment;
-
     }
 
     @Override
     public CharSequence getPageTitle(final int position) {
         switch (position) {
             case 0:
-                return resources.getString(R.string.latest_articles);
+                return resources.getString(R.string.latest);
             case 1:
                 return resources.getString(R.string.categories);
+            case 2:
+                return resources.getString(R.string.bookmarks);
             default:
                 return null;
         }

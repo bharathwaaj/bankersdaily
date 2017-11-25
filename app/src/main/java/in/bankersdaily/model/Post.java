@@ -1,5 +1,8 @@
 package in.bankersdaily.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -16,7 +19,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-public class Post {
+public class Post implements Parcelable {
 
     public static final String LATEST = "latest";
     public static final String OLDEST = "oldest";
@@ -72,6 +75,57 @@ public class Post {
     @Generated(hash = 1782702645)
     public Post() {
     }
+
+    protected Post(Parcel in) {
+        if (in.readByte() == 0) {
+            id = null;
+        } else {
+            id = in.readLong();
+        }
+        date = new Date(in.readLong());
+        modified = new Date(in.readLong());
+        slug = in.readString();
+        status = in.readString();
+        link = in.readString();
+        title = in.readString();
+        content = in.readString();
+        featuredMedia = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        if (id == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(id);
+        }
+        dest.writeLong(date.getTime());
+        dest.writeLong(modified.getTime());
+        dest.writeString(slug);
+        dest.writeString(status);
+        dest.writeString(link);
+        dest.writeString(title);
+        dest.writeString(content);
+        dest.writeString(featuredMedia);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Post> CREATOR = new Creator<Post>() {
+        @Override
+        public Post createFromParcel(Parcel in) {
+            return new Post(in);
+        }
+
+        @Override
+        public Post[] newArray(int size) {
+            return new Post[size];
+        }
+    };
 
     public Long getId() {
         return this.id;
@@ -213,8 +267,15 @@ public class Post {
         myDao.update(this);
     }
 
-    public static QueryBuilder<Post> getPostListQueryBuilder(PostDao postDao, int categoryId) {
+    public static QueryBuilder<Post> getPostListQueryBuilder(PostDao postDao, int categoryId,
+                                                             boolean filterBookmarked) {
+
         QueryBuilder<Post> queryBuilder = postDao.queryBuilder().orderDesc(PostDao.Properties.Date);
+        if (filterBookmarked) {
+            queryBuilder
+                    .join(Bookmark.class, BookmarkDao.Properties.Id)
+                    .where(BookmarkDao.Properties.Id.isNotNull());
+        }
         if (categoryId != 0) {
             queryBuilder
                     .join(JoinPostsWithCategories.class, JoinPostsWithCategoriesDao.Properties.PostId)

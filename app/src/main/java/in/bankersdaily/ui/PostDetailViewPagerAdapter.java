@@ -6,43 +6,35 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v7.app.AppCompatActivity;
 
-import org.greenrobot.greendao.query.QueryBuilder;
+import org.greenrobot.greendao.query.LazyList;
 
-import in.bankersdaily.BankersDailyApp;
 import in.bankersdaily.model.Post;
-import in.bankersdaily.model.PostDao;
-
-import static in.bankersdaily.ui.PostsListFragment.CATEGORY_ID;
 
 public class PostDetailViewPagerAdapter extends FragmentPagerAdapter {
 
     private Activity activity;
-    private QueryBuilder<Post> queryBuilder;
-    private int count;
+    private LazyList<Post> posts;
 
-    PostDetailViewPagerAdapter(AppCompatActivity activity) {
+    PostDetailViewPagerAdapter(AppCompatActivity activity, LazyList<Post> posts) {
         super(activity.getSupportFragmentManager());
         this.activity = activity;
-        PostDao postDao = BankersDailyApp.getDaoSession(activity).getPostDao();
-        int categoryId = activity.getIntent().getIntExtra(CATEGORY_ID, 0);
-        queryBuilder = Post.getPostListQueryBuilder(postDao, categoryId);
-        count = (int) queryBuilder.count();
+        this.posts = posts;
     }
 
     @Override
     public int getCount() {
-        return count;
+        return posts.size();
     }
 
     @Override
     public Fragment getItem(int position) {
         PostDetailFragment fragment = new PostDetailFragment();
-        Post post = queryBuilder.listLazy().get(position);
+        Post post = posts.get(position);
         Bundle bundle = activity.getIntent().getExtras();
         if (bundle == null) {
             bundle = new Bundle();
         }
-        bundle.putString(PostDetailFragment.POST_SLUG, post.getSlug());
+        bundle.putParcelable(PostDetailFragment.POST, post);
         fragment.setArguments(bundle);
         return fragment;
     }

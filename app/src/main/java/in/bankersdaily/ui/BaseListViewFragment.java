@@ -114,7 +114,7 @@ public abstract class BaseListViewFragment<T> extends Fragment
             getLoaderManager().initLoader(LOADER_ID, null, this);
             firstCallBack = false;
         } else {
-            if (items.isEmpty()) {
+            if (isListItemsEmpty()) {
                 if (exception != null) {
                     // Set error message in empty view
                     getErrorMessage(exception);

@@ -14,9 +14,6 @@ import android.support.v4.widget.NestedScrollView;
 import android.text.Html;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebResourceError;
@@ -38,16 +35,13 @@ import in.bankersdaily.BankersDailyApp;
 import in.bankersdaily.R;
 import in.bankersdaily.model.Category;
 import in.bankersdaily.model.Post;
-import in.bankersdaily.model.PostDao;
-import in.bankersdaily.util.ShareUtil;
 import in.bankersdaily.util.ViewUtils;
 
 public class PostDetailFragment extends Fragment {
 
     public static final String POST_SLUG = "postSlug";
+    public static final String POST = "post";
 
-    String postSlug;
-    PostDao postDao;
     Post post;
 
     @BindView(R.id.content) WebView content;
@@ -77,32 +71,18 @@ public class PostDetailFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
         postDetails.setVisibility(View.GONE);
-        setHasOptionsMenu(true);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        postDao = BankersDailyApp.getDaoSession(getActivity()).getPostDao();
-        if(getArguments() != null && getArguments().getString(POST_SLUG) != null) {
-            postSlug = getArguments().getString(POST_SLUG);
-            List<Post> posts = postDao.queryBuilder()
-                    .where(PostDao.Properties.Slug.eq(postSlug)).list();
-
-            if (!posts.isEmpty()) {
-                post = posts.get(0);
-                displayPost(post);
-            }
-            // TODO: If there is no post in this slug in db then fetch the post
+        if(getArguments() != null && getArguments().getParcelable(POST) != null) {
+            post = getArguments().getParcelable(POST);
+            post.__setDaoSession(BankersDailyApp.getDaoSession(getActivity()));
+            displayPost(post);
         } else {
             setEmptyText(R.string.invalid_post, R.string.try_after_sometime, R.drawable.alert_warning);
         }
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.share, menu);
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -181,20 +161,6 @@ public class PostDetailFragment extends Fragment {
         return "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, user-scalable=no\" />" +
                 "<link rel=\"stylesheet\" type=\"text/css\" href=\"typebase.css\" />" +
                 "<style>img{display: inline;height: auto;max-width: 100%;}</style>";
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(final MenuItem item) {
-        if(item.getItemId() == R.id.share) {
-            if (post != null) {
-                ShareUtil.shareUrl(getActivity(), post.getTitle(), post.getLink());
-            } else {
-                ShareUtil.shareUrl(getActivity(), "Check out this article",
-                        getString(R.string.base_url) + postSlug);
-            }
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     protected void setEmptyText(final int title, final int description, final int imageResId) {

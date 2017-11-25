@@ -13,8 +13,6 @@ import java.util.List;
 
 import in.bankersdaily.R;
 import in.bankersdaily.model.Category;
-import in.bankersdaily.model.JoinPostsWithCategories;
-import in.bankersdaily.model.JoinPostsWithCategoriesDao;
 import in.bankersdaily.model.Post;
 import in.bankersdaily.model.PostDao;
 import in.bankersdaily.util.FormatDate;
@@ -23,17 +21,17 @@ import in.bankersdaily.util.SingleTypeAdapter;
 public class PostListAdapter extends SingleTypeAdapter<Post> {
 
     private Activity activity;
-    private PostDao postDao;
     private int categoryId;
+    private boolean filterBookmarked;
     private int count;
     private QueryBuilder<Post> queryBuilder;
 
-    PostListAdapter(Activity activity, PostDao postDao, int categoryId) {
+    PostListAdapter(Activity activity, PostDao postDao, int categoryId, boolean filterBookmarked) {
         super(activity, R.layout.post_list_item);
         this.activity = activity;
-        this.postDao = postDao;
         this.categoryId = categoryId;
-        queryBuilder = Post.getPostListQueryBuilder(postDao, categoryId);
+        this.filterBookmarked =filterBookmarked;
+        queryBuilder = Post.getPostListQueryBuilder(postDao, categoryId, filterBookmarked);
         count = (int) queryBuilder.count();
     }
 
@@ -93,8 +91,8 @@ public class PostListAdapter extends SingleTypeAdapter<Post> {
             public void onClick(View view) {
                 Intent intent = new Intent(activity, PostDetailActivity.class);
                 intent.putExtra(PostDetailActivity.POST_POSITION, position);
-                intent.putExtra(BaseToolBarActivity.ACTIONBAR_TITLE, post.getTitle());
                 intent.putExtra(PostsListFragment.CATEGORY_ID, categoryId);
+                intent.putExtra(PostDetailActivity.FILTER_BOOKMARKED, filterBookmarked);
                 activity.startActivity(intent);
             }
         });

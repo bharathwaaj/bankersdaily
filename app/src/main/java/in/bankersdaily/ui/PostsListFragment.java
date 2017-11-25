@@ -79,7 +79,7 @@ public class PostsListFragment extends BaseDBPagedItemFragment<Post, Long> {
 
     @Override
     protected SingleTypeAdapter<Post> createAdapter(List<Post> items) {
-        return new PostListAdapter(getActivity(), postDao, categoryId);
+        return new PostListAdapter(getActivity(), postDao, categoryId, false);
     }
 
     @Override

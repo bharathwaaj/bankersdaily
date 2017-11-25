@@ -22,10 +22,20 @@
     <string name="no_posts">No Articles</string>
     <string name="no_posts_description">There are no articles right now.</string>
 
+    <string name="no_bookmarks">No Articles Bookmarked Yet</string>
+    <string name="no_bookmarks_description">Your bookmarked articles will appear here.</string>
+
+    <string name="bookmark">Bookmark</string>
+    <string name="unbookmark">Unbookmark</string>
+
     <string name="new_posts_available">\u21BB New Posts Available</string>
 
-    <string name="latest_articles">Latest articles</string>
+    <string name="latest">Latest</string>
     <string name="categories">Categories</string>
+    <string name="bookmarks">Bookmarks</string>
+
+    <string name="latest_articles">Latest Articles</string>
+    <string name="bookmarked_articles">Bookmarked Articles</string>
 
     <string name="no_categories">No Categories</string>
     <string name="no_categories_description">There are no categories right now.</string>
