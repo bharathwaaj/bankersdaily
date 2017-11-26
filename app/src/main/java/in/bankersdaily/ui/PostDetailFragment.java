@@ -27,6 +27,8 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import junit.framework.Assert;
+
 import java.util.List;
 
 import butterknife.BindView;
@@ -36,6 +38,9 @@ import in.bankersdaily.R;
 import in.bankersdaily.model.Category;
 import in.bankersdaily.model.Post;
 import in.bankersdaily.util.ViewUtils;
+import in.testpress.core.TestpressSdk;
+import in.testpress.core.TestpressSession;
+import in.testpress.exam.TestpressExam;
 
 public class PostDetailFragment extends Fragment {
 
@@ -138,6 +143,24 @@ public class PostDetailFragment extends Fragment {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 if (getActivity() == null)
                     return false;
+
+                Uri uri = Uri.parse(url);
+                List<String> pathSegments = uri.getPathSegments();
+                if ((pathSegments.size() == 2) &&
+                        (uri.getHost().equals(getString(R.string.testpress_host_url)) ||
+                                uri.getPathSegments().get(0).equals("exams"))) {
+
+                    if (TestpressSdk.hasActiveSession(getActivity())) {
+                        TestpressSession testpressSession = TestpressSdk.getTestpressSession(getActivity());
+                        Assert.assertNotNull("TestpressSession must not be null.", testpressSession);
+                        TestpressExam.showExamAttemptedState(
+                                getActivity(),
+                                pathSegments.get(1),
+                                testpressSession
+                        );
+                        return true;
+                    }
+                }
 
                 CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
                 builder.setToolbarColor(ContextCompat.getColor(getActivity(), R.color.colorPrimary));

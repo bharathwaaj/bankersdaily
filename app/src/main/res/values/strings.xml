@@ -2,6 +2,12 @@
 
     <string name="app_name">BankersDaily</string>
     <string name="base_url">http://bankersdaily.in/</string>
+    <string name="host_url">bankersdaily.in</string>
+    <string name="testpress_base_url">http://bankersdaily.testpress.in/</string>
+    <string name="testpress_host_url">bankersdaily.testpress.in</string>
+
+    <string name="facebook_app_id">150335602362077</string>
+    <string name="fb_login_protocol_scheme">fb150335602362077</string>
 
     <string name="network_error">Network Error</string>
     <string name="no_internet_try_again">Please check your internet connection &amp; try again.</string>
@@ -45,5 +51,7 @@
     <string name="not_supported">Not supported</string>
     <string name="wrong_url">Url is Incorrect / Not supported.</string>
     <string name="browser_not_available">You need a browser app to this action.</string>
+
+    <string name="facebook_login_error">Facebook sign in error, please check the key hashes</string>
     
 </resources>
