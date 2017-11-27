@@ -1,9 +1,17 @@
 package in.bankersdaily.model;
 
+import android.content.Context;
+import android.support.annotation.Nullable;
+
 import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Index;
-import org.greenrobot.greendao.annotation.Generated;
+
+import java.util.Date;
+import java.util.List;
+
+import in.bankersdaily.BankersDailyApp;
 
 @Entity(indexes = {
         @Index(value = "publishedDateState, postId, categoryId", unique = true)
@@ -90,6 +98,38 @@ public class FetchedPostsTracker {
 
     public void setCategoryId(Long categoryId) {
         this.categoryId = categoryId;
+    }
+
+    @Nullable
+    public static FetchedPostsTracker getTracker(Context context, int categoryId, String state) {
+        FetchedPostsTrackerDao fetchedPostsTrackerDao =
+                BankersDailyApp.getDaoSession(context).getFetchedPostsTrackerDao();
+
+        List<FetchedPostsTracker> postsTrackers = fetchedPostsTrackerDao.queryBuilder()
+                .where(FetchedPostsTrackerDao.Properties.CategoryId.eq(categoryId))
+                .where(FetchedPostsTrackerDao.Properties.PublishedDateState.eq(state))
+                .list();
+
+        if (!postsTrackers.isEmpty()) {
+            return postsTrackers.get(0);
+        }
+        return null;
+    }
+
+    @Nullable
+    public static Date getDate(Context context, int categoryId, String state) {
+        FetchedPostsTracker fetchedPostsTracker =
+                FetchedPostsTracker.getTracker(context, categoryId, state);
+
+        if (fetchedPostsTracker != null) {
+            PostDao postDao = BankersDailyApp.getDaoSession(context).getPostDao();
+            Post post = postDao.queryBuilder()
+                    .where(PostDao.Properties.Id.eq(fetchedPostsTracker.getPostId()))
+                    .list().get(0);
+
+            return post.getDate();
+        }
+        return null;
     }
 
 }

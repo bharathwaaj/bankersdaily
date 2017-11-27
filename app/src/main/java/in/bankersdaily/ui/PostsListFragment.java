@@ -27,7 +27,6 @@ public class PostsListFragment extends BaseDBPagedItemFragment<Post, Long> {
 
     private ApiClient apiClient;
     private PostDao postDao;
-    private FetchedPostsTrackerDao fetchedPostsTrackerDao;
     private int categoryId;
 
     @Override
@@ -35,7 +34,7 @@ public class PostsListFragment extends BaseDBPagedItemFragment<Post, Long> {
         super.onCreate(savedInstanceState);
         apiClient = new ApiClient(getActivity());
         postDao = daoSession.getPostDao();
-        fetchedPostsTrackerDao = daoSession.getFetchedPostsTrackerDao();
+
         if (getArguments() != null) {
             categoryId = getArguments().getInt(CATEGORY_ID);
         }
@@ -79,7 +78,7 @@ public class PostsListFragment extends BaseDBPagedItemFragment<Post, Long> {
 
     @Override
     protected SingleTypeAdapter<Post> createAdapter(List<Post> items) {
-        return new PostListAdapter(getActivity(), postDao, categoryId, false);
+        return new PostListAdapter(getActivity(), categoryId, false);
     }
 
     @Override
@@ -97,6 +96,7 @@ public class PostsListFragment extends BaseDBPagedItemFragment<Post, Long> {
                 }
                 joiningDao.insertOrReplace(new JoinPostsWithCategories(post.getId(), category.getId()));
             }
+            FetchedPostsTrackerDao fetchedPostsTrackerDao = daoSession.getFetchedPostsTrackerDao();
             FetchedPostsTracker latestPostTracker = getFetchedPostsTracker(Post.LATEST);
             FetchedPostsTracker oldestPostTracker = getFetchedPostsTracker(Post.OLDEST);
             if (i == 0 && loaderId == LOADER_ID) {
@@ -131,28 +131,13 @@ public class PostsListFragment extends BaseDBPagedItemFragment<Post, Long> {
     }
 
     private FetchedPostsTracker getFetchedPostsTracker(String state) {
-        List<FetchedPostsTracker> postsTrackers = fetchedPostsTrackerDao.queryBuilder()
-                .where(FetchedPostsTrackerDao.Properties.CategoryId.eq(categoryId))
-                .where(FetchedPostsTrackerDao.Properties.PublishedDateState.eq(state))
-                .list();
-
-        if (!postsTrackers.isEmpty()) {
-            return postsTrackers.get(0);
-        }
-        return null;
+        return FetchedPostsTracker.getTracker(getActivity(), categoryId, state);
     }
 
     private Date getDateFromTracker(String state) {
-        FetchedPostsTracker fetchedPostsTracker = getFetchedPostsTracker(state);
-        if (fetchedPostsTracker != null) {
-            Post post = postDao.queryBuilder()
-                    .where(PostDao.Properties.Id.eq(fetchedPostsTracker.getPostId()))
-                    .list().get(0);
-
-            return post.getDate();
-        }
-        return null;
+        return FetchedPostsTracker.getDate(getActivity(), categoryId, state);
     }
+
 
     @Override
     void clearDB() {

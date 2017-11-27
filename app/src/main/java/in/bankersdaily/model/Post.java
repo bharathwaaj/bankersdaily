@@ -1,5 +1,6 @@
 package in.bankersdaily.model;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
@@ -18,6 +19,8 @@ import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.Date;
 import java.util.List;
+
+import in.bankersdaily.BankersDailyApp;
 
 @Entity
 public class Post implements Parcelable {
@@ -268,14 +271,22 @@ public class Post implements Parcelable {
         myDao.update(this);
     }
 
-    public static QueryBuilder<Post> getPostListQueryBuilder(PostDao postDao, int categoryId,
+    public static QueryBuilder<Post> getPostListQueryBuilder(Context context, int categoryId,
                                                              boolean filterBookmarked) {
 
-        QueryBuilder<Post> queryBuilder = postDao.queryBuilder().orderDesc(PostDao.Properties.Date);
+        PostDao postDao = BankersDailyApp.getDaoSession(context).getPostDao();
+        QueryBuilder<Post> queryBuilder = postDao.queryBuilder()
+                .orderDesc(PostDao.Properties.Date);
+
         if (filterBookmarked) {
             queryBuilder
                     .join(Bookmark.class, BookmarkDao.Properties.Id)
                     .where(BookmarkDao.Properties.Id.isNotNull());
+        } else {
+            Date oldestPostDate = FetchedPostsTracker.getDate(context, categoryId, Post.OLDEST);
+            if (oldestPostDate != null) {
+                queryBuilder.where(PostDao.Properties.Date.ge(oldestPostDate));
+            }
         }
         if (categoryId != 0) {
             queryBuilder

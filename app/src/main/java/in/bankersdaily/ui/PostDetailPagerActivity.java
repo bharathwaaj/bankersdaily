@@ -19,7 +19,6 @@ import in.bankersdaily.model.Bookmark;
 import in.bankersdaily.model.BookmarkDao;
 import in.bankersdaily.model.CategoryDao;
 import in.bankersdaily.model.Post;
-import in.bankersdaily.model.PostDao;
 import in.bankersdaily.util.ShareUtil;
 
 import static in.bankersdaily.ui.PostsListFragment.CATEGORY_ID;
@@ -43,11 +42,10 @@ public class PostDetailPagerActivity extends BaseToolBarActivity {
         ButterKnife.bind(this);
         categoryId = getIntent().getIntExtra(CATEGORY_ID, 0);
         setActionBarTitle();
-        PostDao postDao = BankersDailyApp.getDaoSession(this).getPostDao();
         bookmarkDao = BankersDailyApp.getDaoSession(this).getBookmarkDao();
         boolean filterBookmarked = getIntent().getBooleanExtra(FILTER_BOOKMARKED, false);
         QueryBuilder<Post> queryBuilder =
-                Post.getPostListQueryBuilder(postDao, categoryId, filterBookmarked);
+                Post.getPostListQueryBuilder(this, categoryId, filterBookmarked);
 
         posts = queryBuilder.listLazy();
         PostDetailViewPagerAdapter adapter = new PostDetailViewPagerAdapter(this, posts);
