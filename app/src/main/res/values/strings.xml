@@ -19,11 +19,18 @@
     <string name="try_after_sometime">Please try after sometime</string>
     <string name="some_thing_went_wrong_try_again">Some thing went wrong, please try again later.</string>
 
+    <string name="post_not_available">Article not available</string>
+    <string name="post_not_available_description">This article is no longer available or not published yet.</string>
+
+    <string name="category_not_available">Category not available</string>
+    <string name="category_not_available_description">This category is no longer available or not published yet.</string>
+
     <string name="loading">Loading…</string>
 
     <string name="ok">OK</string>
 
     <string name="article">Article</string>
+    <string name="articles">Articles</string>
     <string name="invalid_post">Invalid Article</string>
     <string name="no_posts">No Articles</string>
     <string name="no_posts_description">There are no articles right now.</string>

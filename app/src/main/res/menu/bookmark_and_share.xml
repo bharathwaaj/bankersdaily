@@ -4,7 +4,12 @@
     <item
         android:id="@+id/bookmark"
         android:icon="@drawable/ic_bookmark"
-        app:showAsAction="always"
-        android:title="@string/bookmark" >
-    </item>
+        app:showAsAction="ifRoom"
+        android:title="@string/bookmark" />
+
+    <item
+        android:id="@+id/share"
+        app:showAsAction="never"
+        android:title="@string/share" />
+
 </menu>

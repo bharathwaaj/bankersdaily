@@ -1,10 +1,14 @@
 package in.bankersdaily.ui;
 
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import in.bankersdaily.R;
+
+import static in.testpress.core.TestpressSdk.ACTION_PRESSED_HOME;
 
 /**
  * Base activity used to support the toolbar & handle backpress.
@@ -39,7 +43,7 @@ public abstract class BaseToolBarActivity extends AppCompatActivity {
             if (getCallingActivity() == null) {
                 onBackPressed();
             } else {
-                setResult(RESULT_CANCELED);
+                setResult(RESULT_CANCELED, new Intent().putExtras(getDataToSetResult()));
                 super.onBackPressed();
             }
             return true;
@@ -55,13 +59,19 @@ public abstract class BaseToolBarActivity extends AppCompatActivity {
          * {@link #startActivityForResult}
          */
         if (getCallingActivity() != null) {
-            setResult(RESULT_CANCELED);
+            setResult(RESULT_CANCELED, new Intent().putExtra(ACTION_PRESSED_HOME, false));
         }
         try {
             super.onBackPressed();
         } catch (IllegalStateException e) {
             supportFinishAfterTransition();
         }
+    }
+
+    protected Bundle getDataToSetResult() {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(ACTION_PRESSED_HOME, true);
+        return bundle;
     }
 
 }

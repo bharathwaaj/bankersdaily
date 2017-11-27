@@ -89,10 +89,10 @@ public class PostListAdapter extends SingleTypeAdapter<Post> {
         view(4).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(activity, PostDetailActivity.class);
-                intent.putExtra(PostDetailActivity.POST_POSITION, position);
+                Intent intent = new Intent(activity, PostDetailPagerActivity.class);
+                intent.putExtra(PostDetailPagerActivity.POST_POSITION, position);
                 intent.putExtra(PostsListFragment.CATEGORY_ID, categoryId);
-                intent.putExtra(PostDetailActivity.FILTER_BOOKMARKED, filterBookmarked);
+                intent.putExtra(PostDetailPagerActivity.FILTER_BOOKMARKED, filterBookmarked);
                 activity.startActivity(intent);
             }
         });

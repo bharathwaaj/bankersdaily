@@ -20,12 +20,16 @@ import in.testpress.core.TestpressSession;
 import in.testpress.exam.TestpressExam;
 
 import static in.bankersdaily.ui.LoginActivity.AUTHENTICATE_REQUEST_CODE;
+import static in.bankersdaily.ui.PostDetailFragment.POST_SLUG;
+import static in.bankersdaily.ui.PostListActivity.CATEGORY_SLUG;
 import static in.testpress.core.TestpressSdk.ACTION_PRESSED_HOME;
 
 public class SplashScreenActivity extends Activity {
 
     // Splash screen timer
     private static final int SPLASH_TIME_OUT = 2000;
+
+    public static final int DEEPLINK_REQUEST_CODE = 4444;
 
     @BindView(R.id.splash_image) ImageView splashImage;
 
@@ -50,8 +54,28 @@ public class SplashScreenActivity extends Activity {
                                 gotoHome();
                             }
                             break;
+                        case "category":
+                            if (pathSegments.size() > 1) {
+                                // If category slug is present, display posts of that category
+                                Intent intent = new Intent(SplashScreenActivity.this,
+                                        PostListActivity.class);
+
+                                intent.putExtra(CATEGORY_SLUG, uri.getLastPathSegment());
+                                startActivityForResult(intent, DEEPLINK_REQUEST_CODE);
+                            } else {
+                                gotoHome();
+                            }
+                            break;
                         default:
-                            gotoHome();
+                            if (pathSegments.size() == 1) {
+                                Intent intent = new Intent(SplashScreenActivity.this,
+                                        PostDetailActivity.class);
+
+                                intent.putExtra(POST_SLUG, pathSegments.get(0));
+                                startActivityForResult(intent, DEEPLINK_REQUEST_CODE);
+                            } else {
+                                gotoHome();
+                            }
                             break;
                     }
                 } else {

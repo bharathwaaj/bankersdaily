@@ -2,6 +2,7 @@ package in.bankersdaily.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -282,6 +283,23 @@ public class Post implements Parcelable {
                     .where(JoinPostsWithCategoriesDao.Properties.CategoryId.eq(categoryId));
         }
         return queryBuilder;
+    }
+
+    @Nullable
+    public Bookmark getBookmark() {
+        final DaoSession daoSession = this.daoSession;
+        if (daoSession == null) {
+            throw new DaoException("Entity is detached from DAO context");
+        }
+        BookmarkDao targetDao = daoSession.getBookmarkDao();
+        List<Bookmark> bookmarks = targetDao.queryBuilder()
+                .where(BookmarkDao.Properties.Id.eq(getId()))
+                .list();
+
+        if (!bookmarks.isEmpty()) {
+            return bookmarks.get(0);
+        }
+        return null;
     }
 
     /** called by internal mechanisms, do not call yourself. */

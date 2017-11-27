@@ -42,6 +42,7 @@ public class ApiClient {
     public static final String BEFORE = "before";
     public static final String CATEGORY = "categories";
     public static final String EMBED = "_embed";
+    public static final String SLUG = "slug";
 
     private final Retrofit retrofit;
 
