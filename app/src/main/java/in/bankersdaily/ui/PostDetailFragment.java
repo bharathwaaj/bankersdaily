@@ -228,9 +228,7 @@ public class PostDetailFragment extends Fragment {
         settings.setUseWideViewPort(true);
         settings.setLoadWithOverviewMode(true);
         content.setWebViewClient(new PostDetailWebViewClient());
-        content.loadDataWithBaseURL("file:///android_asset/", getHeader() + post.getContent(),
-                "text/html", "UTF-8", null);
-
+        content.loadDataWithBaseURL("file:///android_asset/", getHtml(), "text/html", "UTF-8", null);
         postDetails.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.GONE);
     }
@@ -314,6 +312,11 @@ public class PostDetailFragment extends Fragment {
             }
             return true;
         }
+    }
+
+    String getHtml() {
+        return getHeader() +
+                "<div style='margin-left: 20px; margin-right: 20px;'>" + post.getContent() + "</div>";
     }
 
     String getHeader() {
