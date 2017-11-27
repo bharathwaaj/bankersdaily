@@ -7,6 +7,7 @@ import android.view.View;
 
 import com.bumptech.glide.Glide;
 
+import org.greenrobot.greendao.query.LazyList;
 import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.List;
@@ -23,8 +24,8 @@ public class PostListAdapter extends SingleTypeAdapter<Post> {
     private Activity activity;
     private int categoryId;
     private boolean filterBookmarked;
-    private int count;
     private QueryBuilder<Post> queryBuilder;
+    private LazyList<Post> posts;
 
     PostListAdapter(Activity activity, PostDao postDao, int categoryId, boolean filterBookmarked) {
         super(activity, R.layout.post_list_item);
@@ -32,17 +33,17 @@ public class PostListAdapter extends SingleTypeAdapter<Post> {
         this.categoryId = categoryId;
         this.filterBookmarked =filterBookmarked;
         queryBuilder = Post.getPostListQueryBuilder(postDao, categoryId, filterBookmarked);
-        count = (int) queryBuilder.count();
+        posts = queryBuilder.listLazy();
     }
 
     @Override
     public int getCount() {
-        return count;
+        return posts.size();
     }
 
     @Override
     public Post getItem(int position) {
-        return queryBuilder.listLazy().get(position);
+        return posts.get(position);
     }
 
     @Override
@@ -58,7 +59,7 @@ public class PostListAdapter extends SingleTypeAdapter<Post> {
 
     @Override
     public void notifyDataSetChanged() {
-        count = (int) queryBuilder.count();
+        posts = queryBuilder.listLazy();
         super.notifyDataSetChanged();
     }
 

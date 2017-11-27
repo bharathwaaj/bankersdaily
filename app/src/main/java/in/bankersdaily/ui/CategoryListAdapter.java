@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.text.Html;
 import android.view.View;
 
+import org.greenrobot.greendao.query.LazyList;
 import org.greenrobot.greendao.query.QueryBuilder;
 
 import in.bankersdaily.R;
@@ -17,22 +18,24 @@ public class CategoryListAdapter extends SingleTypeAdapter<Category> {
     private Activity activity;
     private CategoryDao categoryDao;
     private int parentId;
+    private LazyList<Category> categories;
 
     CategoryListAdapter(Activity activity, CategoryDao categoryDao, int parentId) {
         super(activity, R.layout.category_list_item);
         this.activity = activity;
         this.categoryDao = categoryDao;
         this.parentId = parentId;
+        categories = getQueryBuilder().listLazy();
     }
 
     @Override
     public int getCount() {
-        return (int) getQueryBuilder().count();
+        return categories.size();
     }
 
     @Override
     public Category getItem(int position) {
-        return getQueryBuilder().listLazy().get(position);
+        return categories.get(position);
     }
 
     private QueryBuilder<Category> getQueryBuilder() {
@@ -44,6 +47,12 @@ public class CategoryListAdapter extends SingleTypeAdapter<Category> {
     @Override
     public long getItemId(int position) {
         return getItem(position).getId();
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        categories = getQueryBuilder().listLazy();
+        super.notifyDataSetChanged();
     }
 
     @Override

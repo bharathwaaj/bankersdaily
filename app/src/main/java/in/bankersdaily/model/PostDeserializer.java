@@ -40,16 +40,20 @@ public class PostDeserializer implements JsonDeserializer<Post> {
         Type type = new TypeToken<List<Category>>(){}.getType();
         List<Category> categories = gson.fromJson(categoriesJson, type);
         post.setCategories(categories);
-
         if (embedded.has("wp:featuredmedia")) {
-            JsonObject imageSizes = embedded.getAsJsonArray("wp:featuredmedia")
-                    .get(0).getAsJsonObject()
-                    .getAsJsonObject("media_details")
-                    .getAsJsonObject("sizes");
+            JsonObject featuredMedia = embedded.getAsJsonArray("wp:featuredmedia")
+                    .get(0).getAsJsonObject();
 
-            String imageSizeField = imageSizes.has("gazana_mini") ? "gazana_mini" : "full";
-            post.setFeaturedMedia(
-                    imageSizes.getAsJsonObject(imageSizeField).get("source_url").getAsString());
+            JsonObject imageSizes =
+                    featuredMedia.getAsJsonObject("media_details").getAsJsonObject("sizes");
+
+            String imageUrl;
+            if (imageSizes.has("gazana_mini")) {
+                imageUrl = imageSizes.getAsJsonObject("gazana_mini").get("source_url").getAsString();
+            } else {
+                imageUrl = featuredMedia.get("source_url").getAsString();
+            }
+            post.setFeaturedMedia(imageUrl);
         }
         return post;
     }
