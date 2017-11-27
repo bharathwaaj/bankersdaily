@@ -71,7 +71,7 @@ public class CategoryListAdapter extends SingleTypeAdapter<Category> {
                         .count();
 
                 Intent intent;
-                if (childCount > 0) {
+                if (childCount > 2) {
                     intent = new Intent(activity, CategoryListActivity.class);
                     intent.putExtra(CategoryListFragment.PARENT_ID, category.getId().intValue());
                 } else {
