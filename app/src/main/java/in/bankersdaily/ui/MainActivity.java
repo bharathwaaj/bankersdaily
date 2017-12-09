@@ -2,6 +2,9 @@ package in.bankersdaily.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import in.bankersdaily.R;
 import in.testpress.core.TestpressSdk;
@@ -19,6 +22,13 @@ public class MainActivity extends BaseToolBarActivity {
         checkAuth();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.search, menu);
+        return true;
+    }
+
     void checkAuth() {
         if (TestpressSdk.hasActiveSession(this)) {
             displayHomeScreen();
@@ -34,6 +44,18 @@ public class MainActivity extends BaseToolBarActivity {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, fragment)
                 .commit();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.search:
+                Intent intent = new Intent(this, SearchActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override

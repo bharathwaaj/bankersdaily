@@ -59,6 +59,7 @@
     <string name="wrong_url">Url is Incorrect / Not supported.</string>
     <string name="browser_not_available">You need a browser app to this action.</string>
 
+    <string name="search">Search</string>
     <string name="facebook_login_error">Facebook sign in error, please check the key hashes</string>
     
 </resources>

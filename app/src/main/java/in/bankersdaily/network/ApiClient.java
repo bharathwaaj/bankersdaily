@@ -32,6 +32,8 @@ public class ApiClient {
 
     static final String CATEGORIES_PATH = "wp-json/wp/v2/categories/";
 
+    public static final String SEARCH_QUERY = "search";
+
     public static final String TIME_ZONE = "GMT+05:30";
 
     /**
