@@ -59,7 +59,7 @@ public class CategoryListAdapter extends SingleTypeAdapter<Category> {
 
     @Override
     protected int[] getChildViewIds() {
-        return new int[] { R.id.title, R.id.ripple_layout };
+        return new int[] { R.id.title, R.id.post_item_layout};
     }
 
     @Override

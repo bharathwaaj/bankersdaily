@@ -57,7 +57,7 @@ public class PostListAdapter extends SingleTypeAdapter<Post> {
     @Override
     protected int[] getChildViewIds() {
         return new int[] { R.id.title, R.id.date, R.id.category_layout, R.id.category,
-                R.id.ripple_layout, R.id.image_view };
+                R.id.post_item_layout, R.id.image_view };
     }
 
     @Override

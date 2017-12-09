@@ -36,7 +36,7 @@ public class BookmarkedPostsListFragment extends BaseListViewFragment<Post> {
 
     @Override
     protected void setNoItemsText() {
-        setEmptyText(R.string.no_bookmarks, R.string.no_bookmarks_description, R.drawable.no_news);
+        setEmptyText(R.string.no_bookmarks, R.string.no_bookmarks_description, R.drawable.bookmark_flat_icon);
     }
 
     @Override

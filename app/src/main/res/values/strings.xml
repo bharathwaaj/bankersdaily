@@ -35,7 +35,7 @@
     <string name="no_posts">No Articles</string>
     <string name="no_posts_description">There are no articles right now.</string>
 
-    <string name="no_bookmarks">No Articles Bookmarked Yet</string>
+    <string name="no_bookmarks">No Articles Bookmarked!</string>
     <string name="no_bookmarks_description">Your bookmarked articles will appear here.</string>
 
     <string name="bookmark">Bookmark</string>
