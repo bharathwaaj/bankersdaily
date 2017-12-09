@@ -18,9 +18,13 @@ import org.greenrobot.greendao.annotation.ToMany;
 import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import in.bankersdaily.BankersDailyApp;
+import in.bankersdaily.network.ApiClient;
+import in.bankersdaily.network.RetrofitCallback;
 
 @Entity
 public class Post implements Parcelable {
@@ -45,6 +49,7 @@ public class Post implements Parcelable {
     @Property private String content;
 
     @Property private String featuredMedia;
+    @Property private String featuredMediaSquare;
 
     @ToMany
     @JoinEntity(
@@ -62,9 +67,9 @@ public class Post implements Parcelable {
     @Generated(hash = 572315894)
     private transient PostDao myDao;
 
-    @Generated(hash = 587973530)
+    @Generated(hash = 241946989)
     public Post(Long id, Date date, Date modified, String slug, String status, String link,
-            String title, String content, String featuredMedia) {
+            String title, String content, String featuredMedia, String featuredMediaSquare) {
         this.id = id;
         this.date = date;
         this.modified = modified;
@@ -74,6 +79,7 @@ public class Post implements Parcelable {
         this.title = title;
         this.content = content;
         this.featuredMedia = featuredMedia;
+        this.featuredMediaSquare = featuredMediaSquare;
     }
 
     @Generated(hash = 1782702645)
@@ -229,6 +235,14 @@ public class Post implements Parcelable {
         this.categories = categories;
     }
 
+    public String getFeaturedMediaSquare() {
+        return this.featuredMediaSquare;
+    }
+
+    public void setFeaturedMediaSquare(String featuredMediaSquare) {
+        this.featuredMediaSquare = featuredMediaSquare;
+    }
+
     /** Resets a to-many relationship, making the next get call to query for a fresh result. */
     @Generated(hash = 1494004962)
     public synchronized void resetCategories() {
@@ -311,6 +325,16 @@ public class Post implements Parcelable {
             return bookmarks.get(0);
         }
         return null;
+    }
+
+    public static void loadLatest(ApiClient apiClient, int categoryId,
+                                  RetrofitCallback<List<Post>> callback) {
+
+        Map<String, Object> queryParams = new LinkedHashMap<String, Object>();
+        queryParams.put(ApiClient.CATEGORY, categoryId);
+        queryParams.put(ApiClient.PER_PAGE, 3);
+        queryParams.put(ApiClient.EMBED, "1");
+        apiClient.getPosts(queryParams).enqueue(callback);
     }
 
     /** called by internal mechanisms, do not call yourself. */

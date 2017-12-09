@@ -36,8 +36,8 @@ public class HomeTabFragment extends Fragment {
                 new HomeTabPagerAdapter(getResources(), getChildFragmentManager(), getArguments());
 
         viewPager.setAdapter(adapter);
-        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         tabLayout.setupWithViewPager(viewPager);
+        viewPager.setOffscreenPageLimit(4);
         Bundle data = getArguments();
         if (data != null) {
             viewPager.setCurrentItem(data.getInt(HomeTabFragment.CURRENT_ITEM, 0));

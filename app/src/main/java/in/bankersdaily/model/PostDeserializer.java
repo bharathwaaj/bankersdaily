@@ -47,13 +47,12 @@ public class PostDeserializer implements JsonDeserializer<Post> {
             JsonObject imageSizes =
                     featuredMedia.getAsJsonObject("media_details").getAsJsonObject("sizes");
 
-            String imageUrl;
+            String imageUrl = featuredMedia.get("source_url").getAsString();
+            post.setFeaturedMedia(imageUrl);
             if (imageSizes.has("gazana_mini")) {
                 imageUrl = imageSizes.getAsJsonObject("gazana_mini").get("source_url").getAsString();
-            } else {
-                imageUrl = featuredMedia.get("source_url").getAsString();
             }
-            post.setFeaturedMedia(imageUrl);
+            post.setFeaturedMediaSquare(imageUrl);
         }
         return post;
     }

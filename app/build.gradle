@@ -65,5 +65,8 @@ dependencies {
         transitive=true
     }
 
+    // Carousel slider in home fragment
+    compile 'com.github.tobiasbuchholz:circularviewpager:1.0.0'
+
     testCompile 'junit:junit:4.12'
 }

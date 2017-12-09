@@ -21,7 +21,7 @@ public class HomeTabPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 3;
+        return 4;
     }
 
     @Override
@@ -29,10 +29,14 @@ public class HomeTabPagerAdapter extends FragmentPagerAdapter {
         Fragment fragment = null;
         switch (position) {
             case 0:
-                fragment = new PostsListFragment();
+                fragment = new HomePromotionsFragment();
                 fragment.setArguments(bundle);
                 break;
             case 1:
+                fragment = new PostsListFragment();
+                fragment.setArguments(bundle);
+                break;
+            case 2:
                 fragment = new CategoryListFragment();
                 Bundle bundle;
                 if (this.bundle == null) {
@@ -43,7 +47,7 @@ public class HomeTabPagerAdapter extends FragmentPagerAdapter {
                 bundle.putInt(CategoryListFragment.PARENT_ID, 0);
                 fragment.setArguments(bundle);
                 break;
-            case 2:
+            case 3:
                 fragment = new BookmarkedPostsListFragment();
                 break;
             default:
@@ -56,10 +60,12 @@ public class HomeTabPagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(final int position) {
         switch (position) {
             case 0:
-                return resources.getString(R.string.latest);
+                return resources.getString(R.string.home);
             case 1:
-                return resources.getString(R.string.categories);
+                return resources.getString(R.string.latest);
             case 2:
+                return resources.getString(R.string.categories);
+            case 3:
                 return resources.getString(R.string.bookmarks);
             default:
                 return null;

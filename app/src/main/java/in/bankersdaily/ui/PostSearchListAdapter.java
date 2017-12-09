@@ -52,7 +52,7 @@ public class PostSearchListAdapter extends SingleTypeAdapter<Post> {
     @Override
     protected void update(final int position, final Post post) {
         Glide.with(activity)
-                .load(post.getFeaturedMedia())
+                .load(post.getFeaturedMediaSquare())
                 .placeholder(R.drawable.placeholder_icon)
                 .error(R.mipmap.ic_launcher)
                 .into(imageView(5));

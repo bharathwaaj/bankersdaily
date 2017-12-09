@@ -39,6 +39,7 @@ public class ApiClient {
     /**
      * Query Params
      */
+    public static final String PER_PAGE = "per_page";
     public static final String ORDER = "order";
     public static final String AFTER = "after";
     public static final String BEFORE = "before";
