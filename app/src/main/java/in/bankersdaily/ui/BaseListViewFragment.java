@@ -31,6 +31,7 @@ import in.bankersdaily.network.RetrofitException;
 import in.bankersdaily.util.SingleTypeAdapter;
 import in.bankersdaily.util.ThrowableLoader;
 import in.bankersdaily.util.ViewUtils;
+import in.testpress.core.TestpressSdk;
 
 /**
  * Base fragment for displaying a list of items with swipe refresh facility & progress for loading
@@ -103,6 +104,10 @@ public abstract class BaseListViewFragment<T> extends Fragment
             swipeRefreshLayout.setRefreshing(true);
         }
         configureList(getActivity(), getListView());
+        //noinspection ConstantConditions
+        emptyDescView.setTypeface(TestpressSdk.getRubikRegularFont(getActivity()));
+        ViewUtils.setTypeface(new TextView[] { emptyTitleView, retryButton },
+                TestpressSdk.getRubikMediumFont(getActivity()));
     }
 
     @Override

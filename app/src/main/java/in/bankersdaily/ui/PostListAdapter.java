@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.text.Html;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
@@ -17,6 +19,8 @@ import in.bankersdaily.model.Category;
 import in.bankersdaily.model.Post;
 import in.bankersdaily.util.FormatDate;
 import in.bankersdaily.util.SingleTypeAdapter;
+import in.bankersdaily.util.ViewUtils;
+import in.testpress.core.TestpressSdk;
 
 public class PostListAdapter extends SingleTypeAdapter<Post> {
 
@@ -60,6 +64,19 @@ public class PostListAdapter extends SingleTypeAdapter<Post> {
     public void notifyDataSetChanged() {
         posts = queryBuilder.listLazy();
         super.notifyDataSetChanged();
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        if (convertView == null) {
+            convertView = super.getView(position, null, parent);
+            textView(0).setTypeface(TestpressSdk.getRubikMediumFont(activity));
+            ViewUtils.setTypeface(new TextView[] { textView(1), textView(3) },
+                    TestpressSdk.getRubikRegularFont(activity));
+
+            return convertView;
+        }
+        return super.getView(position, convertView, parent);
     }
 
     @Override

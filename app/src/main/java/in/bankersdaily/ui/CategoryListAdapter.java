@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.text.Html;
 import android.view.View;
+import android.view.ViewGroup;
 
 import org.greenrobot.greendao.query.LazyList;
 import org.greenrobot.greendao.query.QueryBuilder;
@@ -12,6 +13,7 @@ import in.bankersdaily.R;
 import in.bankersdaily.model.Category;
 import in.bankersdaily.model.CategoryDao;
 import in.bankersdaily.util.SingleTypeAdapter;
+import in.testpress.core.TestpressSdk;
 
 public class CategoryListAdapter extends SingleTypeAdapter<Category> {
 
@@ -58,6 +60,16 @@ public class CategoryListAdapter extends SingleTypeAdapter<Category> {
     @Override
     protected int[] getChildViewIds() {
         return new int[] { R.id.title, R.id.ripple_layout };
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        if (convertView == null) {
+            convertView = super.getView(position, null, parent);
+            textView(0).setTypeface(TestpressSdk.getRubikRegularFont(activity));
+            return convertView;
+        }
+        return super.getView(position, convertView, parent);
     }
 
     @Override

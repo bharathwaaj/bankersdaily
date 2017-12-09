@@ -96,6 +96,7 @@ public class PostDetailFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+
         postDetails.setVisibility(View.GONE);
     }
 
@@ -203,6 +204,10 @@ public class PostDetailFragment extends Fragment {
 
     @SuppressLint("SetJavaScriptEnabled")
     private void displayPost(Post post) {
+        if (getActivity() == null)
+            return;
+
+        title.setTypeface(TestpressSdk.getRubikMediumFont(getActivity()));
         title.setText(Html.fromHtml(post.getTitle()));
         if (post.getCategories().isEmpty()) {
             summaryLayout.setVisibility(View.GONE);
@@ -218,6 +223,9 @@ public class PostDetailFragment extends Fragment {
             summary.setText(categoryString);
             summaryLayout.setVisibility(View.VISIBLE);
         }
+        ViewUtils.setTypeface(new TextView[] { summary, date },
+                TestpressSdk.getRubikRegularFont(getActivity()));
+
         date.setText(DateUtils.getRelativeTimeSpanString(post.getDate().getTime()));
         WebSettings settings = content.getSettings();
         settings.setDefaultTextEncodingName("utf-8");
