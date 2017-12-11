@@ -18,6 +18,14 @@ public class BookmarkedPostsListFragment extends BaseListViewFragment<Post> {
     }
 
     @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser && getActivity() != null ) {
+            getListAdapter().notifyDataSetChanged();
+        }
+    }
+
+    @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
         swipeRefreshLayout.setEnabled(false);
         if (firstCallBack) {
