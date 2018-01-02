@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 import in.bankersdaily.R;
 import in.bankersdaily.model.Category;
 import in.bankersdaily.model.DateDeserializer;
+import in.bankersdaily.model.LoginResponse;
 import in.bankersdaily.model.Post;
 import in.bankersdaily.model.PostDeserializer;
 import in.bankersdaily.util.Assert;
@@ -32,6 +33,8 @@ public class ApiClient {
 
     static final String CATEGORIES_PATH = "wp-json/wp/v2/categories/";
 
+    static final String LOGIN_PATH = "api/user/fb_connect/";
+
     public static final String SEARCH_QUERY = "search";
 
     public static final String TIME_ZONE = "GMT+05:30";
@@ -46,6 +49,9 @@ public class ApiClient {
     public static final String CATEGORY = "categories";
     public static final String EMBED = "_embed";
     public static final String SLUG = "slug";
+    public static final String ACCESS_TOKEN = "access_token";
+    public static final String INSECURE = "insecure";
+    public static final String COOL = "cool";
 
     private final Retrofit retrofit;
 
@@ -97,6 +103,10 @@ public class ApiClient {
 
     public RetrofitCall<List<Category>> getCategories(@QueryMap Map<String, Object> params) {
         return getRetrofitService().getCategories(params);
+    }
+
+    public RetrofitCall<LoginResponse> authenticate(@QueryMap Map<String, Object> params) {
+        return getRetrofitService().authenticate(params);
     }
 
 }

@@ -65,5 +65,7 @@
 
     <string name="today_quiz">Today\'s Quiz</string>
     <string name="start_quiz">Start Quiz</string>
+
+    <string name="email_cannot_retrieve">Need access to retrieve Email from your account</string>
     
 </resources>
