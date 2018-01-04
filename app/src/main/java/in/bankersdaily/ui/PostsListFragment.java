@@ -69,6 +69,7 @@ public class PostsListFragment extends BaseDBPagedItemFragment<Post, Long> {
             }
             Date latestPostDate = getDateFromTracker(Post.LATEST);
             if (latestPostDate != null) {
+                refreshPager.setQueryParams(ApiClient.DATE_QUERY_COLUMN, ApiClient.MODIFIED);
                 refreshPager.setQueryParams(ApiClient.AFTER,
                         FormatDate.getISODateString(latestPostDate));
             }
@@ -97,14 +98,14 @@ public class PostsListFragment extends BaseDBPagedItemFragment<Post, Long> {
                 joiningDao.insertOrReplace(new JoinPostsWithCategories(post.getId(), category.getId()));
             }
             FetchedPostsTrackerDao fetchedPostsTrackerDao = daoSession.getFetchedPostsTrackerDao();
-            FetchedPostsTracker latestPostTracker = getFetchedPostsTracker(Post.LATEST);
-            FetchedPostsTracker oldestPostTracker = getFetchedPostsTracker(Post.OLDEST);
             if (i == 0 && loaderId == LOADER_ID) {
+                FetchedPostsTracker latestPostTracker = getFetchedPostsTracker(Post.LATEST);
                 // Insert latest post in tracker if not exist, update otherwise.
                 FetchedPostsTracker.insertOrUpdate(latestPostTracker, fetchedPostsTrackerDao,
                         Post.LATEST, post.getId(), categoryId);
 
             } else if (i + 1 == posts.size()) {
+                FetchedPostsTracker oldestPostTracker = getFetchedPostsTracker(Post.OLDEST);
                 switch (loaderId) {
                     case LOADER_ID:
                         // Insert oldest post in tracker only if not exist already

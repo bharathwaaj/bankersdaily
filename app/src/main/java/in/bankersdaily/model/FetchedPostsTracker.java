@@ -127,7 +127,7 @@ public class FetchedPostsTracker {
                     .where(PostDao.Properties.Id.eq(fetchedPostsTracker.getPostId()))
                     .list().get(0);
 
-            return post.getDate();
+            return state.equals(Post.LATEST) ? post.getModified() : post.getDate();
         }
         return null;
     }

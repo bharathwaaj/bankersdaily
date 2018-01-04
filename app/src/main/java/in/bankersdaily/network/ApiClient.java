@@ -59,6 +59,8 @@ public class ApiClient {
     public static final String ORDER = "order";
     public static final String AFTER = "after";
     public static final String BEFORE = "before";
+    public static final String DATE_QUERY_COLUMN = "date_query_column";
+    public static final String MODIFIED = "modified";
     public static final String CATEGORY = "categories";
     public static final String EMBED = "_embed";
     public static final String SLUG = "slug";
