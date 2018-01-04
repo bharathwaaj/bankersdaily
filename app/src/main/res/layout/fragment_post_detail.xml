@@ -10,6 +10,7 @@
         android:layout_above="@+id/comment_box_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fadeScrollbars="false"
         android:background="#ffffff">
 
         <RelativeLayout
@@ -213,6 +214,37 @@
 
         </RelativeLayout>
     </android.support.v4.widget.NestedScrollView>
+
+    <LinearLayout
+        android:layout_alignParentRight="true"
+        android:layout_above="@+id/comment_box_layout"
+        android:orientation="horizontal"
+        android:background="#ccffffff"
+        android:visibility="gone"
+        android:id="@+id/scroll_to_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:layout_marginRight="5dp"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/scroll_to_direction"
+            android:textColor="#666"
+            android:text="Top"
+            />
+
+        <ImageView
+            android:id="@+id/scroll_to_direction_icon"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:src="@drawable/ic_keyboard_arrow_up_black_18dp"
+            android:tint="#666"
+            />
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/comment_box_layout"

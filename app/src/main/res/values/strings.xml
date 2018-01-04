@@ -67,5 +67,8 @@
     <string name="start_quiz">Start Quiz</string>
 
     <string name="email_cannot_retrieve">Need access to retrieve Email from your account</string>
-    
+
+    <string name="top">Top</string>
+    <string name="bottom">Bottom</string>
+
 </resources>

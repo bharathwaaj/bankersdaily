@@ -127,6 +127,9 @@ public class PostDetailFragment extends Fragment
     @BindView(R.id.comment_box) EditText commentsEditText;
     @BindView(R.id.comment_box_layout) LinearLayout commentBoxLayout;
     @BindView(R.id.new_comments_available_label) LinearLayout newCommentsAvailableLabel;
+    @BindView(R.id.scroll_to_button) LinearLayout scrollToButton;
+    @BindView(R.id.scroll_to_direction) TextView scrollToDirection;
+    @BindView(R.id.scroll_to_direction_icon) ImageView scrollToDirectionIcon;
 
     private Handler newCommentsHandler;
     private Runnable runnable = new Runnable() {
@@ -168,13 +171,46 @@ public class PostDetailFragment extends Fragment
         ViewUtils.setTypeface(
                 new TextView[] { date, summary, commentsEmptyView, commentsEditText, emptyDescView,
                         commentsEditText },
-                TestpressSdk.getRubikRegularFont(getActivity()))
-        ;
+                TestpressSdk.getRubikRegularFont(getActivity())
+        );
         ViewUtils.setTypeface(
                 new TextView[] { title, emptyTitleView, retryButton, loadPreviousCommentsText,
-                        commentsLabel, loadNewCommentsText },
+                        commentsLabel, loadNewCommentsText, scrollToDirection },
                 TestpressSdk.getRubikMediumFont(getActivity())
         );
+        postDetails.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY,
+                                       int oldScrollX, int oldScrollY) {
+
+                int scrollViewHeight = postDetails.getHeight();
+                int totalScrollViewChildHeight = postDetails.getChildAt(0).getHeight();
+                // Let's assume end has reached at 50 pixels before itself(on partial visible of
+                // last item)
+                boolean endHasBeenReached =
+                        (scrollY + scrollViewHeight + 50) >= totalScrollViewChildHeight;
+
+                if (endHasBeenReached) {
+                    newCommentsAvailableLabel.setVisibility(View.GONE);
+                }
+                if ((totalScrollViewChildHeight - scrollViewHeight) > 200) {
+                    if (scrollY < oldScrollY) {
+                        scrollToDirection.setText(R.string.top);
+                        scrollToDirectionIcon
+                                .setImageResource(R.drawable.ic_keyboard_arrow_up_black_18dp);
+                    } else {
+                        scrollToDirection.setText(R.string.bottom);
+                        scrollToDirectionIcon
+                                .setImageResource(R.drawable.ic_keyboard_arrow_down_black_18dp);
+                    }
+                    if (scrollY < 5 || endHasBeenReached) {
+                        scrollToButton.setVisibility(View.GONE);
+                    } else {
+                        scrollToButton.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+        });
         postDetails.setVisibility(View.GONE);
     }
 
@@ -439,22 +475,6 @@ public class PostDetailFragment extends Fragment
                 });
             }
         });
-        postDetails.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
-            @Override
-            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY,
-                                       int oldScrollX, int oldScrollY) {
-
-                int scrollViewHeight = postDetails.getHeight();
-                int totalScrollViewChildHeight = postDetails.getChildAt(0).getHeight();
-                // Let's assume end has reached at 50 pixels before itself(on partial visible of last item)
-                boolean endHasBeenReached =
-                        (scrollY + scrollViewHeight + 50) >= totalScrollViewChildHeight;
-
-                if (endHasBeenReached) {
-                    newCommentsAvailableLabel.setVisibility(View.GONE);
-                }
-            }
-        });
         commentsLayout.setVisibility(View.VISIBLE);
         getLoaderManager().initLoader(PREVIOUS_COMMENTS_LOADER_ID, null, PostDetailFragment.this);
     }
@@ -550,6 +570,10 @@ public class PostDetailFragment extends Fragment
             previousCommentsLoadingLayout.setVisibility(View.GONE);
             if ((comments == null || comments.isEmpty()) && commentsAdapter.getItemCount() == 0) {
                 commentBoxLayout.setVisibility(View.VISIBLE);
+                if (exception.getCause() instanceof IOException) {
+                    loadPreviousCommentsText.setText(R.string.load_comments);
+                    loadPreviousCommentsLayout.setVisibility(View.VISIBLE);
+                }
             } else if (exception.getCause() instanceof IOException) {
                 loadPreviousCommentsText.setText(R.string.load_comments);
                 loadPreviousCommentsLayout.setVisibility(View.VISIBLE);
@@ -679,6 +703,14 @@ public class PostDetailFragment extends Fragment
                 }
             }
         });
+    }
+
+    @OnClick(R.id.scroll_to_button) void scrollTo() {
+        if (scrollToDirection.getText().equals(getString(R.string.bottom))) {
+            postDetails.fullScroll(View.FOCUS_DOWN);
+        } else {
+            postDetails.scrollTo(0, 0);
+        }
     }
 
     String getHtml() {
