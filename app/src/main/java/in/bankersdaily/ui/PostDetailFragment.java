@@ -1,18 +1,26 @@
 package in.bankersdaily.ui;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.customtabs.CustomTabsIntent;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.Loader;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.text.SpannableString;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,6 +34,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -33,42 +42,64 @@ import android.widget.TextView;
 
 import org.greenrobot.greendao.query.LazyList;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import in.bankersdaily.BankersDailyApp;
 import in.bankersdaily.R;
 import in.bankersdaily.model.Bookmark;
 import in.bankersdaily.model.Category;
 import in.bankersdaily.model.CategoryDao;
+import in.bankersdaily.model.Comment;
+import in.bankersdaily.model.CreateCommentResponse;
 import in.bankersdaily.model.DaoSession;
 import in.bankersdaily.model.JoinPostsWithCategories;
 import in.bankersdaily.model.Post;
 import in.bankersdaily.model.PostDao;
 import in.bankersdaily.network.ApiClient;
+import in.bankersdaily.network.CommentsPager;
 import in.bankersdaily.network.RetrofitCallback;
 import in.bankersdaily.network.RetrofitException;
 import in.bankersdaily.util.Assert;
+import in.bankersdaily.util.FormatDate;
 import in.bankersdaily.util.ShareUtil;
+import in.bankersdaily.util.ThrowableLoader;
 import in.bankersdaily.util.ViewUtils;
 import in.testpress.core.TestpressSdk;
 import in.testpress.core.TestpressSession;
 import in.testpress.exam.TestpressExam;
+import in.testpress.util.UIUtils;
 
-import static in.bankersdaily.network.ApiClient.SLUG;
 import static in.bankersdaily.ui.PostListActivity.CATEGORY_SLUG;
+import static in.bankersdaily.util.ThrowableLoader.getException;
 
-public class PostDetailFragment extends Fragment {
+public class PostDetailFragment extends Fragment
+        implements LoaderManager.LoaderCallbacks<List<Comment>> {
 
     public static final String POST_SLUG = "postSlug";
     public static final String POST = "post";
+    public static final String UPDATE_TIME_SPAN = "updateTimeSpan";
+    public static final int NEW_COMMENT_SYNC_INTERVAL = 10000; // 10 sec
+    private static final int PREVIOUS_COMMENTS_LOADER_ID = 0;
+    private static final int NEW_COMMENTS_LOADER_ID = 1;
 
     private PostDao postDao;
     private Post post;
-    private DaoSession daoSession;;
+    private DaoSession daoSession;
+    private CommentsPager previousCommentsPager;
+    private CommentsPager newCommentsPager;
+    private CommentsListAdapter commentsAdapter;
+    private ProgressDialog progressDialog;
+    private boolean postedNewComment;
+    private ApiClient apiClient;
+    private View rootLayout;
 
     @BindView(R.id.content) WebView content;
     @BindView(R.id.title) TextView title;
@@ -83,6 +114,41 @@ public class PostDetailFragment extends Fragment {
     @BindView(R.id.empty_description) TextView emptyDescView;
     @BindView(R.id.image_view) ImageView emptyImageView;
     @BindView(R.id.retry_button) Button retryButton;
+    @BindView(R.id.comments_layout) LinearLayout commentsLayout;
+    @BindView(R.id.loading_previous_comments_layout) LinearLayout previousCommentsLoadingLayout;
+    @BindView(R.id.loading_new_comments_layout) LinearLayout newCommentsLoadingLayout;
+    @BindView(R.id.comments_list_view) RecyclerView listView;
+    @BindView(R.id.load_previous_comments_layout) LinearLayout loadPreviousCommentsLayout;
+    @BindView(R.id.load_previous_comments) TextView loadPreviousCommentsText;
+    @BindView(R.id.load_new_comments_layout) LinearLayout loadNewCommentsLayout;
+    @BindView(R.id.load_new_comments_text) TextView loadNewCommentsText;
+    @BindView(R.id.comments_label) TextView commentsLabel;
+    @BindView(R.id.comments_empty_view) TextView commentsEmptyView;
+    @BindView(R.id.comment_box) EditText commentsEditText;
+    @BindView(R.id.comment_box_layout) LinearLayout commentBoxLayout;
+    @BindView(R.id.new_comments_available_label) LinearLayout newCommentsAvailableLabel;
+
+    private Handler newCommentsHandler;
+    private Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            //noinspection ArraysAsListWithZeroOrOneArgument
+            commentsAdapter.notifyItemRangeChanged(0, commentsAdapter.getItemCount(),
+                    UPDATE_TIME_SPAN); // Update the time in comments
+
+            getNewCommentsPager().reset();
+            getLoaderManager().restartLoader(NEW_COMMENTS_LOADER_ID, null, PostDetailFragment.this);
+        }
+    };
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        apiClient = new ApiClient(getActivity());
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setMessage(getResources().getString(R.string.testpress_please_wait));
+        progressDialog.setCancelable(false);
+    }
 
     @Nullable
     @Override
@@ -96,7 +162,19 @@ public class PostDetailFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
-
+        rootLayout = view;
+        UIUtils.setIndeterminateDrawable(view.getContext(), progressDialog, 4);
+        //noinspection ConstantConditions
+        ViewUtils.setTypeface(
+                new TextView[] { date, summary, commentsEmptyView, commentsEditText, emptyDescView,
+                        commentsEditText },
+                TestpressSdk.getRubikRegularFont(getActivity()))
+        ;
+        ViewUtils.setTypeface(
+                new TextView[] { title, emptyTitleView, retryButton, loadPreviousCommentsText,
+                        commentsLabel, loadNewCommentsText },
+                TestpressSdk.getRubikMediumFont(getActivity())
+        );
         postDetails.setVisibility(View.GONE);
     }
 
@@ -120,7 +198,7 @@ public class PostDetailFragment extends Fragment {
                 displayPost(post);
                 setHasOptionsMenu(true);
             } else {
-                loadPost(postSlug);
+                loadPost(postSlug, ApiClient.POSTS_PATH);
             }
         } else {
             setEmptyText(R.string.invalid_post, R.string.try_after_sometime, R.drawable.alert_warning);
@@ -141,18 +219,19 @@ public class PostDetailFragment extends Fragment {
         }
     }
 
-    void loadPost(final String postSlug) {
+    void loadPost(final String postSlug, final String postUrl) {
         progressBar.setVisibility(View.VISIBLE);
         Map<String, Object> queryParams = new LinkedHashMap<String, Object>();
-        queryParams.put(SLUG, postSlug);
+        queryParams.put(ApiClient.SLUG, postSlug);
         queryParams.put(ApiClient.EMBED, "1");
-        new ApiClient(getActivity()).getPosts(queryParams)
+        new ApiClient(getActivity()).getPosts(postUrl, queryParams)
                 .enqueue(new RetrofitCallback<List<Post>>() {
                     @Override
                     public void onSuccess(List<Post> posts) {
                         if (!posts.isEmpty()) {
                             post = posts.get(0);
                             CategoryDao categoryDao = daoSession.getCategoryDao();
+                            post.__setDaoSession(daoSession);
                             for (Category category : post.getCategories()) {
                                 LazyList<Category> categories = categoryDao.queryBuilder()
                                         .where(CategoryDao.Properties.Id.eq(category.getId()))
@@ -168,8 +247,13 @@ public class PostDetailFragment extends Fragment {
                             displayPost(post);
                             setHasOptionsMenu(true);
                         } else {
-                            setEmptyText(R.string.post_not_available,
-                                    R.string.post_not_available_description, R.drawable.alert_warning);
+                            if (postUrl.equals(ApiClient.POSTS_PATH)) {
+                                loadPost(postSlug, ApiClient.PAGES_PATH);
+                            } else {
+                                setEmptyText(R.string.post_not_available,
+                                        R.string.post_not_available_description,
+                                        R.drawable.alert_warning);
+                            }
                         }
                     }
 
@@ -187,7 +271,7 @@ public class PostDetailFragment extends Fragment {
                                 public void onClick(View v) {
                                     progressBar.setVisibility(View.VISIBLE);
                                     emptyView.setVisibility(View.GONE);
-                                    loadPost(postSlug);
+                                    loadPost(postSlug, postUrl);
                                 }
                             });
                             retryButton.setVisibility(View.VISIBLE);
@@ -207,7 +291,6 @@ public class PostDetailFragment extends Fragment {
         if (getActivity() == null)
             return;
 
-        title.setTypeface(TestpressSdk.getRubikMediumFont(getActivity()));
         title.setText(Html.fromHtml(post.getTitle()));
         if (post.getCategories().isEmpty()) {
             summaryLayout.setVisibility(View.GONE);
@@ -223,8 +306,6 @@ public class PostDetailFragment extends Fragment {
             summary.setText(categoryString);
             summaryLayout.setVisibility(View.VISIBLE);
         }
-        ViewUtils.setTypeface(new TextView[] { summary, date },
-                TestpressSdk.getRubikRegularFont(getActivity()));
 
         date.setText(DateUtils.getRelativeTimeSpanString(post.getDate().getTime()));
         WebSettings settings = content.getSettings();
@@ -260,6 +341,9 @@ public class PostDetailFragment extends Fragment {
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
             progressBar.setVisibility(View.GONE);
+            if (post.getCommentStatus().equals("open")) {
+                displayComments();
+            }
         }
 
         @Override
@@ -322,6 +406,281 @@ public class PostDetailFragment extends Fragment {
         }
     }
 
+    void displayComments() {
+        commentsAdapter = new CommentsListAdapter(getActivity());
+        listView.setNestedScrollingEnabled(false);
+        listView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        listView.setAdapter(commentsAdapter);
+        loadPreviousCommentsLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadPreviousCommentsLayout.setVisibility(View.GONE);
+                getLoaderManager()
+                        .restartLoader(PREVIOUS_COMMENTS_LOADER_ID, null, PostDetailFragment.this);
+            }
+        });
+        loadNewCommentsLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadNewCommentsLayout.setVisibility(View.GONE);
+                getLoaderManager()
+                        .restartLoader(NEW_COMMENTS_LOADER_ID, null, PostDetailFragment.this);
+            }
+        });
+        newCommentsAvailableLabel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                newCommentsAvailableLabel.setVisibility(View.GONE);
+                postDetails.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        postDetails.fullScroll(View.FOCUS_DOWN);
+                    }
+                });
+            }
+        });
+        postDetails.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY,
+                                       int oldScrollX, int oldScrollY) {
+
+                int scrollViewHeight = postDetails.getHeight();
+                int totalScrollViewChildHeight = postDetails.getChildAt(0).getHeight();
+                // Let's assume end has reached at 50 pixels before itself(on partial visible of last item)
+                boolean endHasBeenReached =
+                        (scrollY + scrollViewHeight + 50) >= totalScrollViewChildHeight;
+
+                if (endHasBeenReached) {
+                    newCommentsAvailableLabel.setVisibility(View.GONE);
+                }
+            }
+        });
+        commentsLayout.setVisibility(View.VISIBLE);
+        getLoaderManager().initLoader(PREVIOUS_COMMENTS_LOADER_ID, null, PostDetailFragment.this);
+    }
+
+    @Override
+    public Loader<List<Comment>> onCreateLoader(int loaderId, Bundle args) {
+        switch (loaderId) {
+            case PREVIOUS_COMMENTS_LOADER_ID:
+                previousCommentsLoadingLayout.setVisibility(View.VISIBLE);
+                return new CommentsLoader(this, loaderId);
+            case NEW_COMMENTS_LOADER_ID:
+                if (postedNewComment) {
+                    newCommentsLoadingLayout.setVisibility(View.VISIBLE);
+                }
+                return new CommentsLoader(this, loaderId);
+            default:
+                //An invalid id was passed
+                return null;
+        }
+    }
+
+    private static class CommentsLoader extends ThrowableLoader<List<Comment>> {
+
+        private PostDetailFragment fragment;
+        private int loaderID;
+
+        CommentsLoader(PostDetailFragment fragment, int loaderID) {
+            super(fragment.getContext(), null);
+            this.fragment = fragment;
+            this.loaderID = loaderID;
+        }
+
+        @Override
+        public List<Comment> loadData() throws RetrofitException {
+            switch (loaderID) {
+                case PREVIOUS_COMMENTS_LOADER_ID:
+                    fragment.getPreviousCommentsPager().clearResources().next();
+                    return fragment.getPreviousCommentsPager().getResources();
+                case NEW_COMMENTS_LOADER_ID:
+                    do {
+                        fragment.getNewCommentsPager().next();
+                    } while (fragment.getNewCommentsPager().hasNext());
+                    return fragment.getNewCommentsPager().getResources();
+                default:
+                    //An invalid id was passed
+                    return null;
+            }
+        }
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    CommentsPager getPreviousCommentsPager() {
+        if (previousCommentsPager == null) {
+            previousCommentsPager = new CommentsPager(apiClient, post.getId(), 0);
+            previousCommentsPager.queryParams
+                    .put(ApiClient.BEFORE, FormatDate.getISODateString(new Date()));
+        }
+        return previousCommentsPager;
+    }
+
+    CommentsPager getNewCommentsPager() {
+        if (newCommentsPager == null) {
+            newCommentsPager = new CommentsPager(apiClient, post.getId(), 0);
+        }
+        List<Comment> comments = commentsAdapter.getComments();
+        if (newCommentsPager.queryParams.isEmpty() && comments.size() != 0) {
+            Comment latestComment = comments.get(comments.size() - 1);
+            //noinspection ConstantConditions
+            newCommentsPager.queryParams.put(ApiClient.AFTER, latestComment.getDate());
+        }
+        return newCommentsPager;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<Comment>> loader, List<Comment> comments) {
+        switch (loader.getId()) {
+            case PREVIOUS_COMMENTS_LOADER_ID:
+                onPreviousCommentsLoadFinished(loader, comments);
+                break;
+            case NEW_COMMENTS_LOADER_ID:
+                onNewCommentsLoadFinished(loader, comments);
+                break;
+        }
+    }
+
+    void onPreviousCommentsLoadFinished(Loader<List<Comment>> loader, List<Comment> comments) {
+        //noinspection ThrowableResultOfMethodCallIgnored
+        final Exception exception = getException(loader);
+        if (previousCommentsPager == null || (exception == null && comments == null)) {
+            return;
+        }
+        if (exception != null) {
+            previousCommentsLoadingLayout.setVisibility(View.GONE);
+            if ((comments == null || comments.isEmpty()) && commentsAdapter.getItemCount() == 0) {
+                commentBoxLayout.setVisibility(View.VISIBLE);
+            } else if (exception.getCause() instanceof IOException) {
+                loadPreviousCommentsText.setText(R.string.load_comments);
+                loadPreviousCommentsLayout.setVisibility(View.VISIBLE);
+                Snackbar.make(rootLayout, R.string.testpress_no_internet_connection,
+                        Snackbar.LENGTH_SHORT).show();
+            } else {
+                Snackbar.make(rootLayout, R.string.network_error,
+                        Snackbar.LENGTH_SHORT).show();
+            }
+            return;
+        }
+
+        if (!comments.isEmpty()) {
+            commentsAdapter.addPreviousComments(comments);
+        } else {
+            commentsEmptyView.setVisibility(View.VISIBLE);
+        }
+        if (getPreviousCommentsPager().hasNext()) {
+            loadPreviousCommentsText.setText(R.string.load_previous_comments);
+            loadPreviousCommentsLayout.setVisibility(View.VISIBLE);
+        } else {
+            loadPreviousCommentsLayout.setVisibility(View.GONE);
+        }
+        if (commentBoxLayout.getVisibility() == View.GONE) {
+            commentBoxLayout.setVisibility(View.VISIBLE);
+        }
+        previousCommentsLoadingLayout.setVisibility(View.GONE);
+        if (newCommentsHandler == null) {
+            newCommentsHandler = new Handler();
+            newCommentsHandler.postDelayed(runnable, NEW_COMMENT_SYNC_INTERVAL);
+        }
+    }
+
+    void onNewCommentsLoadFinished(Loader<List<Comment>> loader, List<Comment> comments) {
+        //noinspection ThrowableResultOfMethodCallIgnored
+        final Exception exception = getException(loader);
+        if (exception != null) {
+            newCommentsLoadingLayout.setVisibility(View.GONE);
+            if (postedNewComment) {
+                if (exception.getCause() instanceof IOException) {
+                    Snackbar.make(rootLayout, R.string.testpress_no_internet_connection,
+                            Snackbar.LENGTH_SHORT).show();
+                } else {
+                    Snackbar.make(rootLayout, R.string.network_error,
+                            Snackbar.LENGTH_SHORT).show();
+                }
+                loadNewCommentsLayout.setVisibility(View.VISIBLE);
+            } else {
+                newCommentsHandler.postDelayed(runnable, NEW_COMMENT_SYNC_INTERVAL);
+            }
+            return;
+        }
+
+        if (!comments.isEmpty()) {
+            commentsAdapter.addComments(comments);
+        }
+        if (commentsAdapter.getItemCount() != 0 && commentsEmptyView.getVisibility() == View.VISIBLE) {
+            commentsEmptyView.setVisibility(View.GONE);
+        }
+        newCommentsLoadingLayout.setVisibility(View.GONE);
+        if (postedNewComment) {
+            // if user posted a comment scroll to the bottom
+            postedNewComment = false;
+            postDetails.post(new Runnable() {
+                @Override
+                public void run() {
+                    postDetails.fullScroll(View.FOCUS_DOWN);
+                }
+            });
+        } else {
+            int scrollY = postDetails.getScrollY();
+            int scrollViewHeight = postDetails.getHeight();
+            int totalScrollViewChildHeight = postDetails.getChildAt(0).getHeight();
+            boolean endHasBeenReached = (scrollY + scrollViewHeight) >= totalScrollViewChildHeight;
+            if (!comments.isEmpty() && !endHasBeenReached) {
+                newCommentsAvailableLabel.setVisibility(View.VISIBLE);
+            }
+        }
+        newCommentsHandler.postDelayed(runnable, NEW_COMMENT_SYNC_INTERVAL);
+    }
+
+    @OnClick(R.id.send) void sendComment() {
+
+        final String comment = commentsEditText.getText().toString().trim();
+        if (comment.isEmpty()) {
+            return;
+        }
+        if (!progressDialog.isShowing()) {
+            progressDialog.show();
+        }
+        UIUtils.hideSoftKeyboard(getActivity());
+        //noinspection deprecation
+        postComment(Html.toHtml(new SpannableString(comment))); // Convert to html to support line breaks
+    }
+
+    void postComment(final String comment) {
+        Map<String, Object> queryParam = new LinkedHashMap<>();
+        queryParam.put(ApiClient.CONTENT, comment);
+        queryParam.put(ApiClient.POST_ID, post.getId());
+        queryParam.put(ApiClient.COMMENT_STATUS, 1);
+        queryParam.put(ApiClient.INSECURE, ApiClient.COOL);
+        apiClient.postComment(queryParam).enqueue(new RetrofitCallback<CreateCommentResponse>() {
+            @Override
+            public void onSuccess(CreateCommentResponse response) {
+                commentsEditText.setText("");
+                listView.requestLayout();
+                progressDialog.dismiss();
+                Snackbar.make(rootLayout, R.string.comment_posted, Snackbar.LENGTH_SHORT).show();
+                if (newCommentsHandler != null) {
+                    newCommentsHandler.removeCallbacks(runnable);
+                }
+                postedNewComment = true;
+                getNewCommentsPager().reset();
+                getLoaderManager()
+                        .restartLoader(NEW_COMMENTS_LOADER_ID, null, PostDetailFragment.this);
+            }
+
+            @Override
+            public void onException(RetrofitException exception) {
+                progressDialog.dismiss();
+                if (exception.getCause() instanceof IOException) {
+                    Snackbar.make(rootLayout, R.string.testpress_no_internet_connection,
+                            Snackbar.LENGTH_SHORT).show();
+                } else {
+                    Snackbar.make(rootLayout, R.string.network_error,
+                            Snackbar.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
     String getHtml() {
         return getHeader() +
                 "<div style='margin-left: 20px; margin-right: 20px;'>" + post.getContent() + "</div>";
@@ -373,7 +732,14 @@ public class PostDetailFragment extends Fragment {
 
     @Override
     public void onDestroy () {
+        if (newCommentsHandler != null) {
+            newCommentsHandler.removeCallbacks(runnable);
+        }
         super.onDestroy ();
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<Comment>> loader) {
     }
 
 }

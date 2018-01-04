@@ -43,6 +43,7 @@ public class Post implements Parcelable {
     @Expose @Property private String slug;
     @Expose @Property private String status;
     @Expose @Property private String link;
+    @Expose @Property private String commentStatus;
 
     @Property private String title;
 
@@ -67,15 +68,17 @@ public class Post implements Parcelable {
     @Generated(hash = 572315894)
     private transient PostDao myDao;
 
-    @Generated(hash = 241946989)
+    @Generated(hash = 2123399416)
     public Post(Long id, Date date, Date modified, String slug, String status, String link,
-            String title, String content, String featuredMedia, String featuredMediaSquare) {
+            String commentStatus, String title, String content, String featuredMedia,
+            String featuredMediaSquare) {
         this.id = id;
         this.date = date;
         this.modified = modified;
         this.slug = slug;
         this.status = status;
         this.link = link;
+        this.commentStatus = commentStatus;
         this.title = title;
         this.content = content;
         this.featuredMedia = featuredMedia;
@@ -179,6 +182,14 @@ public class Post implements Parcelable {
 
     public String getLink() {
         return this.link;
+    }
+
+    public String getCommentStatus() {
+        return this.commentStatus;
+    }
+
+    public void setCommentStatus(String commentStatus) {
+        this.commentStatus = commentStatus;
     }
 
     public void setLink(String link) {
@@ -334,7 +345,7 @@ public class Post implements Parcelable {
         queryParams.put(ApiClient.CATEGORY, categoryId);
         queryParams.put(ApiClient.PER_PAGE, 3);
         queryParams.put(ApiClient.EMBED, "1");
-        apiClient.getPosts(queryParams).enqueue(callback);
+        apiClient.getPosts(ApiClient.POSTS_PATH, queryParams).enqueue(callback);
     }
 
     /** called by internal mechanisms, do not call yourself. */
