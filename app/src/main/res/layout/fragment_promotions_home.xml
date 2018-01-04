@@ -183,46 +183,7 @@
 
                 </LinearLayout>
 
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:id="@+id/empty_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:layout_centerVertical="true"
-                    android:visibility="gone">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:id="@+id/empty_title"
-                        android:text="Network Error"
-                        android:textStyle="bold"
-                        android:textColor="@color/black_text"
-                        android:textSize="18sp"
-                        android:layout_gravity="center"
-                        android:drawableLeft="@drawable/ic_error_outline_black_18dp"
-                        android:drawablePadding="3dp"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:id="@+id/empty_description"
-                        android:textColor="@color/black_text"
-                        android:textSize="14sp"
-                        android:text="@string/testpress_no_internet_connection"
-                        android:gravity="center"/>
-
-                    <android.support.v7.widget.AppCompatButton
-                        style="@style/SmallButton"
-                        android:text="@string/tap_to_retry"
-                        android:id="@+id/retry_button"
-                        android:textSize="12sp"
-                        android:layout_gravity="center_horizontal" />
-
-                </LinearLayout>
+               <include layout="@layout/empty_view_with_image" />
 
             </RelativeLayout>
 

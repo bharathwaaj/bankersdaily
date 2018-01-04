@@ -61,6 +61,8 @@ public class HomePromotionsFragment extends Fragment {
     @BindView(R.id.more_notifications_text) TextView moreNotificationText;
     @BindView(R.id.more_daily_quiz_text) TextView moreDailyQuizText;
     @BindView(R.id.empty_container) LinearLayout emptyView;
+    @BindView(R.id.empty_title) protected TextView emptyTitleView;
+    @BindView(R.id.empty_description) protected TextView emptyDescView;
     @BindView(R.id.retry_button) Button retryButton;
     @BindView(R.id.scroll_view) ScrollView scrollView;
     @BindView(R.id.swipe_container) SwipeRefreshLayout swipeRefresh;
@@ -80,8 +82,13 @@ public class HomePromotionsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_promotions_home, container, false);
         ButterKnife.bind(this, view);
         ViewUtils.setTypeface(
-                new TextView[] { moreCurrentAffairsText, moreDailyQuizText, moreNotificationText },
-                TestpressSdk.getRubikRegularFont(getActivity())
+                new TextView[] { moreCurrentAffairsText, moreDailyQuizText, moreNotificationText,
+                        emptyDescView },
+                TestpressSdk.getRubikRegularFont(view.getContext())
+        );
+        ViewUtils.setTypeface(
+                new TextView[] { emptyTitleView, retryButton },
+                TestpressSdk.getRubikMediumFont(view.getContext())
         );
         noOfItemsLoaded = 0;
         promotionPagerAdapter = new PromotionPagerAdapter(getFragmentManager(), promotions);
@@ -106,12 +113,8 @@ public class HomePromotionsFragment extends Fragment {
             }
         });
         swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
-        swipeRefresh.post(new Runnable() {
-            @Override
-            public void run() {
-                swipeRefresh.setRefreshing(true);
-            }
-        });
+        swipeRefresh.measure(View.MEASURED_SIZE_MASK, View.MEASURED_HEIGHT_STATE_SHIFT);
+        swipeRefresh.setRefreshing(true);
         return view;
     }
 
