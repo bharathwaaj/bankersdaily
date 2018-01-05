@@ -137,6 +137,8 @@ public class HomePromotionsFragment extends Fragment {
         Post.loadLatest(apiClient, CURRENT_AFFAIRS_ID, new RetrofitCallback<List<Post>>() {
             @Override
             public void onSuccess(List<Post> posts) {
+                if (getActivity() == null)
+                    return;
                 currentAffairs = posts;
                 promotions.add(posts.get(0));
                 PostSearchListAdapter adapter = new PostSearchListAdapter(getActivity());
@@ -162,6 +164,8 @@ public class HomePromotionsFragment extends Fragment {
         Post.loadLatest(apiClient, DAILY_QUIZ_ID, new RetrofitCallback<List<Post>>() {
             @Override
             public void onSuccess(List<Post> posts) {
+                if (getActivity() == null)
+                    return;
                 dailyQuiz = posts;
                 promotions.add(posts.get(0));
                 PostSearchListAdapter adapter = new PostSearchListAdapter(getActivity());
@@ -187,6 +191,8 @@ public class HomePromotionsFragment extends Fragment {
         Post.loadLatest(apiClient, NOTIFICATIONS_ID, new RetrofitCallback<List<Post>>() {
             @Override
             public void onSuccess(List<Post> posts) {
+                if (getActivity() == null)
+                    return;
                 notifications = new ArrayList<>(posts);
                 promotions.add(posts.get(0));
                 PostSearchListAdapter adapter = new PostSearchListAdapter(getActivity());
