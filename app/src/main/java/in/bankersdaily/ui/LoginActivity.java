@@ -34,12 +34,12 @@ import in.testpress.util.UIUtils;
 import static in.bankersdaily.network.ApiClient.ACCESS_TOKEN;
 import static in.bankersdaily.network.ApiClient.COOL;
 import static in.bankersdaily.network.ApiClient.INSECURE;
+import static in.bankersdaily.util.Preferences.KEY_AUTH_SHARED_PREFS;
+import static in.bankersdaily.util.Preferences.KEY_WORDPRESS_TOKEN;
 
 public class LoginActivity extends BaseToolBarActivity {
 
     public static final int AUTHENTICATE_REQUEST_CODE = 1111;
-    public static final String KEY_AUTH_SHARED_PREFS = "authSharedPreferences";
-    public static final String KEY_WORDPRESS_TOKEN = "wordPressToken";
 
     private View loginView;
     private CallbackManager callbackManager;

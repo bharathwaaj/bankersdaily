@@ -7,6 +7,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import in.bankersdaily.R;
+import in.bankersdaily.util.Preferences;
 import in.testpress.core.TestpressSdk;
 
 import static in.bankersdaily.ui.LoginActivity.AUTHENTICATE_REQUEST_CODE;
@@ -30,7 +31,8 @@ public class MainActivity extends BaseToolBarActivity {
     }
 
     void checkAuth() {
-        if (TestpressSdk.hasActiveSession(this)) {
+        String wordPressToken = Preferences.getWordPressToken(this);
+        if (!wordPressToken.isEmpty() && TestpressSdk.hasActiveSession(this)) {
             displayHomeScreen();
         } else {
             Intent intent = new Intent(this, LoginActivity.class);

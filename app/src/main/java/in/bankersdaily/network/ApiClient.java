@@ -1,7 +1,6 @@
 package in.bankersdaily.network;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -23,7 +22,7 @@ import in.bankersdaily.model.LoginResponse;
 import in.bankersdaily.model.Post;
 import in.bankersdaily.model.PostDeserializer;
 import in.bankersdaily.util.Assert;
-import in.testpress.core.TestpressSdk;
+import in.bankersdaily.util.Preferences;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -31,9 +30,6 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.QueryMap;
-
-import static in.bankersdaily.ui.LoginActivity.KEY_AUTH_SHARED_PREFS;
-import static in.bankersdaily.ui.LoginActivity.KEY_WORDPRESS_TOKEN;
 
 public class ApiClient {
 
@@ -122,10 +118,7 @@ public class ApiClient {
     }
 
     private void addCookie(Map<String, Object> params) {
-        SharedPreferences pref =
-                context.getSharedPreferences(KEY_AUTH_SHARED_PREFS, Context.MODE_PRIVATE);
-
-        params.put(COOKIE, pref.getString(KEY_WORDPRESS_TOKEN, ""));
+        params.put(COOKIE, Preferences.getWordPressToken(context));
     }
 
     public RetrofitCall<List<Post>> getPosts(String url, @QueryMap Map<String, Object> params) {
