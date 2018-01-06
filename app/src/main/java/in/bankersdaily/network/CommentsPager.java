@@ -10,12 +10,10 @@ public class CommentsPager extends BaseResourcePager<Comment> {
 
     private ApiClient apiClient;
     private long postId;
-    private int parent;
 
-    public CommentsPager(ApiClient apiClient, long postId, int parent) {
+    public CommentsPager(ApiClient apiClient, long postId) {
         this.apiClient = apiClient;
         this.postId = postId;
-        this.parent = parent;
         itemsPerPage = 10;
     }
 
@@ -27,7 +25,6 @@ public class CommentsPager extends BaseResourcePager<Comment> {
     @Override
     public Response<List<Comment>> getItems(int page, int size) throws IOException {
         queryParams.put(ApiClient.POST, postId);
-        queryParams.put(ApiClient.PARENT, parent);
         return apiClient.getComments(queryParams).execute();
     }
 
