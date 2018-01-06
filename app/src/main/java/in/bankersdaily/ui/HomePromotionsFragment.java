@@ -289,12 +289,12 @@ public class HomePromotionsFragment extends Fragment {
             displayCardView(dailyQuizCardView, dailyQuizListView);
             displayCardView(notificationCardView, notificationListView);
             swipeRefresh.setRefreshing(false);
+            scrollView.smoothScrollTo(0, 0);
         }
     }
 
     void displayCardView(CardView cardView, ListView listView) {
         cardView.setVisibility(View.VISIBLE);
-        ViewUtils.slide_down(getActivity(), cardView);
         ViewUtils.setListViewHeightBasedOnItems(listView);
     }
 

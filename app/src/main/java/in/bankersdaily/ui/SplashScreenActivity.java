@@ -27,7 +27,7 @@ import static in.testpress.core.TestpressSdk.ACTION_PRESSED_HOME;
 public class SplashScreenActivity extends Activity {
 
     // Splash screen timer
-    private static final int SPLASH_TIME_OUT = 2000;
+    private static final int SPLASH_TIME_OUT = 500;
 
     public static final int DEEPLINK_REQUEST_CODE = 4444;
 

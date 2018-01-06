@@ -377,7 +377,7 @@ public class PostDetailFragment extends Fragment
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
             progressBar.setVisibility(View.GONE);
-            if (post.getCommentStatus().equals("open")) {
+            if (getActivity() != null && post.getCommentStatus().equals("open")) {
                 displayComments();
             }
         }
@@ -770,11 +770,17 @@ public class PostDetailFragment extends Fragment
     }
 
     @Override
-    public void onDestroy () {
+    public void onDestroyView() {
         if (newCommentsHandler != null) {
             newCommentsHandler.removeCallbacks(runnable);
         }
-        super.onDestroy ();
+        final ViewGroup viewGroup = (ViewGroup) content.getParent();
+        if (viewGroup != null) {
+            // Remove webView from its parent before destroy to support below kitkat
+            viewGroup.removeView(content);
+        }
+        content.destroy();
+        super.onDestroyView();
     }
 
     @Override
