@@ -2,6 +2,7 @@ package in.bankersdaily.ui;
 
 import android.os.Bundle;
 import android.support.v4.content.Loader;
+import android.view.View;
 
 import java.util.List;
 
@@ -14,15 +15,25 @@ public class BookmarkedPostsListFragment extends BaseListViewFragment<Post> {
     @Override
     public void onResume() {
         super.onResume();
-        getListAdapter().notifyDataSetChanged();
+        displayDataFromDB();
     }
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser && getActivity() != null ) {
-            getListAdapter().notifyDataSetChanged();
+            displayDataFromDB();
         }
+    }
+
+    protected void displayDataFromDB() {
+        getListAdapter().notifyDataSetChanged();
+
+        if (isListItemsEmpty()) {
+            setNoItemsText();
+            retryButton.setVisibility(View.GONE);
+        }
+        showList();
     }
 
     @Override
