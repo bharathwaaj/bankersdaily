@@ -390,16 +390,23 @@ public class PostDetailFragment extends Fragment
             Uri uri = Uri.parse(url);
             List<String> pathSegments = uri.getPathSegments();
             if (uri.getHost().equals(getString(R.string.testpress_host_url)) &&
-                    pathSegments.size() == 2 && pathSegments.get(0).equals("exams")) {
+                    ((pathSegments.size() == 2 || pathSegments.size() == 4) &&
+                            pathSegments.get(0).equals("exams"))) {
 
                 if (TestpressSdk.hasActiveSession(getActivity())) {
                     TestpressSession testpressSession =
                             TestpressSdk.getTestpressSession(getActivity());
 
                     Assert.assertNotNull("TestpressSession must not be null.", testpressSession);
+                    String slug;
+                    if (pathSegments.size() == 4) {
+                        slug = pathSegments.get(2);
+                    } else {
+                        slug = pathSegments.get(1);
+                    }
                     TestpressExam.showExamAttemptedState(
                             getActivity(),
-                            pathSegments.get(1),
+                            slug,
                             testpressSession
                     );
                     return true;
@@ -528,7 +535,7 @@ public class PostDetailFragment extends Fragment
     @SuppressLint("SimpleDateFormat")
     CommentsPager getPreviousCommentsPager() {
         if (previousCommentsPager == null) {
-            previousCommentsPager = new CommentsPager(apiClient, post.getId(), 0);
+            previousCommentsPager = new CommentsPager(apiClient, post.getId());
             previousCommentsPager.queryParams
                     .put(ApiClient.BEFORE, FormatDate.getISODateString(new Date()));
         }
@@ -537,7 +544,7 @@ public class PostDetailFragment extends Fragment
 
     CommentsPager getNewCommentsPager() {
         if (newCommentsPager == null) {
-            newCommentsPager = new CommentsPager(apiClient, post.getId(), 0);
+            newCommentsPager = new CommentsPager(apiClient, post.getId());
         }
         List<Comment> comments = commentsAdapter.getComments();
         if (newCommentsPager.queryParams.isEmpty() && comments.size() != 0) {

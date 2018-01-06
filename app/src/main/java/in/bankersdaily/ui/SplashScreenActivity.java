@@ -47,7 +47,7 @@ public class SplashScreenActivity extends Activity {
                     List<String> pathSegments = uri.getPathSegments();
                     switch (pathSegments.get(0)) {
                         case "exams":
-                            if (pathSegments.size() == 2) {
+                            if (pathSegments.size() == 2 || pathSegments.size() == 4) {
                                 // If exam slug is present, directly goto the start exam screen
                                 authenticateUser(uri);
                             } else {
@@ -101,12 +101,25 @@ public class SplashScreenActivity extends Activity {
             Assert.assertNotNull("TestpressSession must not be null.", testpressSession);
             switch (pathSegments.get(0)) {
                 case "exams":
+                    String slug;
+                    if (pathSegments.size() == 2) {
+                        slug = pathSegments.get(1);
+                    } else if (pathSegments.size() == 4) {
+                        slug = pathSegments.get(2);
+                    } else {
+                        gotoHome();
+                        break;
+                    }
                     // If exam slug is present, directly goto the start exam screen
                     TestpressExam.showExamAttemptedState(
                             activity,
-                            pathSegments.get(1),
+                            slug,
                             testpressSession
                     );
+                    break;
+                default:
+                    gotoHome();
+                    break;
             }
         } else {
             Intent intent = new Intent(this, LoginActivity.class);
