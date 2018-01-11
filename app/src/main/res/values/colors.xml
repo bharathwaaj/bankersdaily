@@ -14,4 +14,6 @@
     <color name="tab_background_color">@color/white</color>
     <color name="tab_indicator_color">@color/colorPrimary</color>
 
+    <color name="dark_yellow">#FFC107</color>
+
 </resources>

@@ -5,6 +5,8 @@ import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -245,14 +247,22 @@ public class PostDetailFragment extends Fragment
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.bookmark_and_share, menu);
+        if (getActivity() == null)
+            return;
+
         Bookmark bookmark = post.getBookmark();
+        MenuItem item = menu.getItem(0);
+        Drawable drawable = item.getIcon();
         if (bookmark != null) {
-            menu.getItem(0).setTitle(R.string.unbookmark);
-            menu.getItem(0).setIcon(R.drawable.ic_bookmarked);
+            item.setTitle(R.string.unbookmark);
+            drawable.mutate().setColorFilter(ContextCompat.getColor(getActivity(),
+                    R.color.dark_yellow), PorterDuff.Mode.SRC_IN);
         } else {
-            menu.getItem(0).setTitle(R.string.bookmark);
-            menu.getItem(0).setIcon(R.drawable.ic_bookmark);
+            item.setTitle(R.string.bookmark);
+            drawable.mutate().setColorFilter(ContextCompat.getColor(getActivity(),
+                    R.color.actionbar_text), PorterDuff.Mode.SRC_IN);
         }
+        item.setIcon(drawable);
     }
 
     void loadPost(final String postSlug, final String postUrl) {
@@ -735,17 +745,23 @@ public class PostDetailFragment extends Fragment
     public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
             case R.id.bookmark:
+                if (getActivity() == null)
+                    return true;
                 Bookmark bookmark = post.getBookmark();
+                Drawable drawable = item.getIcon();
                 if (bookmark != null) {
                     bookmark.delete();
                     item.setTitle(R.string.bookmark);
-                    item.setIcon(R.drawable.ic_bookmark);
+                    drawable.mutate().setColorFilter(ContextCompat.getColor(getActivity(),
+                            R.color.actionbar_text), PorterDuff.Mode.SRC_IN);
                 } else {
                     bookmark = new Bookmark(post.getId());
                     daoSession.getBookmarkDao().insertOrReplaceInTx(bookmark);
                     item.setTitle(R.string.unbookmark);
-                    item.setIcon(R.drawable.ic_bookmarked);
+                    drawable.mutate().setColorFilter(ContextCompat.getColor(getActivity(),
+                            R.color.dark_yellow), PorterDuff.Mode.SRC_IN);
                 }
+                item.setIcon(drawable);
                 return true;
             case R.id.share:
                 ShareUtil.shareUrl(getActivity(), post.getTitle(), post.getLink());

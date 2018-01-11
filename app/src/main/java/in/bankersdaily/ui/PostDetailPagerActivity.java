@@ -1,7 +1,10 @@
 package in.bankersdaily.ui;
 
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -74,13 +77,18 @@ public class PostDetailPagerActivity extends BaseToolBarActivity {
 
     void updateOptionsMenu() {
         Bookmark bookmark = getBookmark(posts.get(viewPager.getCurrentItem()));
+        MenuItem item = menu.getItem(0);
+        Drawable drawable = item.getIcon();
         if (bookmark != null) {
-            menu.getItem(0).setTitle(R.string.unbookmark);
-            menu.getItem(0).setIcon(R.drawable.ic_bookmarked);
+            item.setTitle(R.string.unbookmark);
+            drawable.mutate().setColorFilter(ContextCompat.getColor(this, R.color.dark_yellow),
+                    PorterDuff.Mode.SRC_IN);
         } else {
-            menu.getItem(0).setTitle(R.string.bookmark);
-            menu.getItem(0).setIcon(R.drawable.ic_bookmark);
+            item.setTitle(R.string.bookmark);
+            drawable.mutate().setColorFilter(ContextCompat.getColor(this, R.color.actionbar_text),
+                    PorterDuff.Mode.SRC_IN);
         }
+        item.setIcon(drawable);
     }
 
     @Override
@@ -97,16 +105,20 @@ public class PostDetailPagerActivity extends BaseToolBarActivity {
         switch (item.getItemId()) {
             case R.id.bookmark:
                 Bookmark bookmark = getBookmark(post);
+                Drawable drawable = item.getIcon();
                 if (bookmark != null) {
                     bookmark.delete();
                     item.setTitle(R.string.bookmark);
-                    item.setIcon(R.drawable.ic_bookmark);
+                    drawable.mutate().setColorFilter(ContextCompat.getColor(this,
+                            R.color.actionbar_text), PorterDuff.Mode.SRC_IN);
                 } else {
                     bookmark = new Bookmark(post.getId());
                     bookmarkDao.insertOrReplaceInTx(bookmark);
                     item.setTitle(R.string.unbookmark);
-                    item.setIcon(R.drawable.ic_bookmarked);
+                    drawable.mutate().setColorFilter(ContextCompat.getColor(this,
+                            R.color.dark_yellow), PorterDuff.Mode.SRC_IN);
                 }
+                item.setIcon(drawable);
                 return true;
             case R.id.share:
                 ShareUtil.shareUrl(this, post.getTitle(), post.getLink());
