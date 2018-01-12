@@ -43,8 +43,8 @@ import static in.bankersdaily.ui.PostListActivity.CATEGORY_SLUG;
 
 public class HomePromotionsFragment extends Fragment {
 
-    private static final int CURRENT_AFFAIRS_ID = 5;
-    public static final int DAILY_QUIZ_ID = 19;
+    private static final int DAILY_CURRENT_AFFAIRS_ID = 13;
+    public static final int CURRENT_AFFAIRS_QUIZ_ID = 111;
     public static final int NOTIFICATIONS_ID = 32;
     public static final int HOME_SLIDER_PREVIEW_PADDING = 50;
 
@@ -60,6 +60,9 @@ public class HomePromotionsFragment extends Fragment {
     @BindView(R.id.more_current_affairs_text) TextView moreCurrentAffairsText;
     @BindView(R.id.more_notifications_text) TextView moreNotificationText;
     @BindView(R.id.more_daily_quiz_text) TextView moreDailyQuizText;
+    @BindView(R.id.daily_current_affairs_label) protected TextView dailyCurrentAffairsLabel;
+    @BindView(R.id.current_affairs_quiz_label) protected TextView currentAffairsQuizLabel;
+    @BindView(R.id.notification_label) protected TextView notificationLabel;
     @BindView(R.id.empty_container) LinearLayout emptyView;
     @BindView(R.id.empty_title) protected TextView emptyTitleView;
     @BindView(R.id.empty_description) protected TextView emptyDescView;
@@ -134,7 +137,7 @@ public class HomePromotionsFragment extends Fragment {
     }
 
     public void loadCurrentAffairs() {
-        Post.loadLatest(apiClient, CURRENT_AFFAIRS_ID, new RetrofitCallback<List<Post>>() {
+        Post.loadLatest(apiClient, DAILY_CURRENT_AFFAIRS_ID, new RetrofitCallback<List<Post>>() {
             @Override
             public void onSuccess(List<Post> posts) {
                 if (getActivity() == null)
@@ -142,6 +145,7 @@ public class HomePromotionsFragment extends Fragment {
                 currentAffairs = posts;
                 promotions.add(posts.get(0));
                 PostSearchListAdapter adapter = new PostSearchListAdapter(getActivity());
+                adapter.setHideCategoryLabel(true);
                 adapter.setItems(posts);
                 currentAffairsListView.setAdapter(adapter);
                 hideProgress();
@@ -161,7 +165,7 @@ public class HomePromotionsFragment extends Fragment {
     }
 
     public void loadDailyQuiz() {
-        Post.loadLatest(apiClient, DAILY_QUIZ_ID, new RetrofitCallback<List<Post>>() {
+        Post.loadLatest(apiClient, CURRENT_AFFAIRS_QUIZ_ID, new RetrofitCallback<List<Post>>() {
             @Override
             public void onSuccess(List<Post> posts) {
                 if (getActivity() == null)
@@ -169,6 +173,7 @@ public class HomePromotionsFragment extends Fragment {
                 dailyQuiz = posts;
                 promotions.add(posts.get(0));
                 PostSearchListAdapter adapter = new PostSearchListAdapter(getActivity());
+                adapter.setHideCategoryLabel(true);
                 adapter.setItems(posts);
                 dailyQuizListView.setAdapter(adapter);
                 hideProgress();
@@ -216,13 +221,13 @@ public class HomePromotionsFragment extends Fragment {
 
     @OnClick(R.id.more_current_affairs) void showCurrentAffairs() {
         Intent intent = new Intent(getActivity(), PostListActivity.class);
-        intent.putExtra(CATEGORY_SLUG, "current-affairs");
+        intent.putExtra(CATEGORY_SLUG, "daily-current-affairs");
         startActivity(intent);
     }
 
     @OnClick(R.id.more_daily_quiz) void showDailyQuiz() {
         Intent intent = new Intent(getActivity(), PostListActivity.class);
-        intent.putExtra(CATEGORY_SLUG, "study-materials");
+        intent.putExtra(CATEGORY_SLUG, "current-affairs-quiz");
         startActivity(intent);
     }
 
@@ -252,7 +257,6 @@ public class HomePromotionsFragment extends Fragment {
 
     void displayPromotions() {
         promotionsView.setVisibility(View.VISIBLE);
-        ViewUtils.slide_down(getActivity(), promotionsView);
         promotionPagerAdapter.setItems(promotions);
         promotionPagerAdapter.notifyDataSetChanged();
         promotionsPager.addOnPageChangeListener(new CircularViewPagerHandler(promotionsPager) {

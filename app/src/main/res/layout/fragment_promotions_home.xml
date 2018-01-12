@@ -58,13 +58,20 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" >
 
+                            <TextView
+                                android:id="@+id/daily_current_affairs_label"
+                                android:text="@string/daily_current_affairs"
+                                style="@style/CategoryLabel"
+                                />
+
                             <ListView
                                 android:id="@+id/current_affairs_list"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
+                                android:listSelector="@android:color/transparent"
+                                android:layout_below="@id/daily_current_affairs_label"
                                 android:focusable="false"
-                                android:divider="#efefef"
-                                android:dividerHeight="1dp" />
+                                android:divider="@null" />
 
                             <LinearLayout
                                 android:layout_width="wrap_content"
@@ -76,7 +83,7 @@
                                 android:paddingTop="5dp"
                                 android:paddingBottom="10dp"
                                 android:paddingLeft="10dp"
-                                android:paddingRight="10dp"
+                                android:paddingRight="15dp"
                                 android:background="?attr/selectableItemBackground"
                                 android:orientation="horizontal">
                                 <TextView
@@ -95,7 +102,7 @@
                         android:visibility="gone"
                         android:layout_height="wrap_content"
                         android:layout_width="match_parent"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginTop="15dp"
                         card_view:cardBackgroundColor="@android:color/white"
                         card_view:cardPreventCornerOverlap="false"
                         card_view:cardUseCompatPadding="true"
@@ -105,13 +112,21 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" >
 
+                            <TextView
+                                android:id="@+id/current_affairs_quiz_label"
+                                android:text="@string/current_affairs_quiz"
+                                style="@style/CategoryLabel"
+                                />
+
                             <ListView
                                 android:id="@+id/daily_quiz_list"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
+                                android:listSelector="@android:color/transparent"
+                                android:cacheColorHint="@android:color/transparent"
+                                android:layout_below="@id/current_affairs_quiz_label"
                                 android:focusable="false"
-                                android:divider="#efefef"
-                                android:dividerHeight="1dp" />
+                                android:divider="@null" />
 
                             <LinearLayout
                                 android:layout_width="wrap_content"
@@ -123,7 +138,7 @@
                                 android:paddingTop="5dp"
                                 android:paddingBottom="10dp"
                                 android:paddingLeft="10dp"
-                                android:paddingRight="10dp"
+                                android:paddingRight="15dp"
                                 android:background="?attr/selectableItemBackground"
                                 android:orientation="horizontal">
                                 <TextView
@@ -142,7 +157,7 @@
                         android:visibility="gone"
                         android:layout_height="wrap_content"
                         android:layout_width="match_parent"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginTop="15dp"
                         card_view:cardBackgroundColor="@android:color/white"
                         card_view:cardPreventCornerOverlap="false"
                         card_view:cardUseCompatPadding="true"
@@ -152,13 +167,21 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" >
 
+                            <TextView
+                                android:id="@+id/notification_label"
+                                android:text="@string/notification"
+                                style="@style/CategoryLabel"
+                                />
+
                             <ListView
                                 android:id="@+id/notifications_list"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
+                                android:layout_below="@id/notification_label"
                                 android:focusable="false"
-                                android:divider="#efefef"
-                                android:dividerHeight="1dp" />
+                                android:listSelector="@android:color/transparent"
+                                android:cacheColorHint="@android:color/transparent"
+                                android:divider="@null" />
 
                             <LinearLayout
                                 android:layout_width="wrap_content"
@@ -170,7 +193,7 @@
                                 android:paddingTop="5dp"
                                 android:paddingBottom="10dp"
                                 android:paddingLeft="10dp"
-                                android:paddingRight="10dp"
+                                android:paddingRight="15dp"
                                 android:background="?attr/selectableItemBackground"
                                 android:orientation="horizontal">
                                 <TextView

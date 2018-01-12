@@ -16,13 +16,14 @@ import com.bumptech.glide.Glide;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import in.bankersdaily.BankersDailyApp;
 import in.bankersdaily.R;
 import in.bankersdaily.model.Category;
 import in.bankersdaily.model.Post;
 import in.bankersdaily.util.ViewUtils;
 import in.testpress.core.TestpressSdk;
 
-import static in.bankersdaily.ui.HomePromotionsFragment.DAILY_QUIZ_ID;
+import static in.bankersdaily.ui.HomePromotionsFragment.CURRENT_AFFAIRS_QUIZ_ID;
 import static in.bankersdaily.ui.HomePromotionsFragment.NOTIFICATIONS_ID;
 import static in.bankersdaily.ui.PostDetailFragment.POST_SLUG;
 
@@ -42,10 +43,10 @@ public class PromotionFragment extends Fragment {
 
         ButterKnife.bind(this, rootView);
         post = getArguments().getParcelable("post");
-
+        post.__setDaoSession(BankersDailyApp.getDaoSession(getActivity()));
         int emptyImageRes = 0;
         if (post.getFeaturedMedia() == null) {
-            if (isCategory(DAILY_QUIZ_ID)) {
+            if (isCategory(CURRENT_AFFAIRS_QUIZ_ID)) {
                 emptyImageRes = R.drawable.quiz_placeholder;
             } else if (isCategory(NOTIFICATIONS_ID)) {
                 emptyImageRes = R.drawable.job_notifications_placeholder;
@@ -56,11 +57,13 @@ public class PromotionFragment extends Fragment {
         }
         Glide.with(getActivity())
                 .load(post.getFeaturedMedia())
-                .placeholder(R.drawable.placeholder_icon)
+                .placeholder(emptyImageRes)
                 .error(emptyImageRes)
                 .into(promotionImage);
 
-        promotionImage.setMaxHeight(ViewUtils.getImageHeightWithRespectToDevice(getActivity()));
+        promotionImage.getLayoutParams().height =
+                ViewUtils.getImageHeightWithRespectToDevice(getActivity());
+
         title.setText(Html.fromHtml(post.getTitle()));
         title.setTypeface(TestpressSdk.getRubikMediumFont(getActivity()));
         return rootView;

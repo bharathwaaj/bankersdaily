@@ -24,9 +24,10 @@ import static in.bankersdaily.ui.PostDetailFragment.POST_SLUG;
 public class PostSearchListAdapter extends SingleTypeAdapter<Post> {
 
     private Activity activity;
+    private boolean hideCategoryLabel;
 
     PostSearchListAdapter(Activity activity) {
-        super(activity, R.layout.post_list_item);
+        super(activity, R.layout.post_search_list_item);
         this.activity = activity;
     }
 
@@ -40,8 +41,7 @@ public class PostSearchListAdapter extends SingleTypeAdapter<Post> {
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
             convertView = super.getView(position, null, parent);
-            textView(0).setTypeface(TestpressSdk.getRubikMediumFont(activity));
-            ViewUtils.setTypeface(new TextView[] { textView(1), textView(3) },
+            ViewUtils.setTypeface(new TextView[] { textView(0), textView(1), textView(3) },
                     TestpressSdk.getRubikRegularFont(activity));
 
             return convertView;
@@ -59,7 +59,7 @@ public class PostSearchListAdapter extends SingleTypeAdapter<Post> {
 
         setText(0, Html.fromHtml(post.getTitle()));
         setText(1, FormatDate.getAbbreviatedTimeSpan(post.getDate().getTime()));
-        if (post.getCategories().isEmpty()) {
+        if (post.getCategories().isEmpty() || hideCategoryLabel) {
             setGone(2, true);
         } else {
             setGone(2, false);
@@ -83,4 +83,7 @@ public class PostSearchListAdapter extends SingleTypeAdapter<Post> {
         });
     }
 
+    public void setHideCategoryLabel(boolean hideCategoryLabel) {
+        this.hideCategoryLabel = hideCategoryLabel;
+    }
 }

@@ -69,13 +69,12 @@
 
             <android.support.v7.widget.CardView
                 android:id="@+id/result_list_card"
-                style="@style/TestpressCardViewNormal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:visibility="gone"
                 card_view:cardBackgroundColor="@android:color/white"
                 card_view:cardPreventCornerOverlap="false"
-                card_view:cardUseCompatPadding="true"
-                card_view:cardElevation="4dp"
-                card_view:cardCornerRadius="2dp">
+                card_view:cardUseCompatPadding="true">
 
                 <ListView
                     android:id="@android:id/list"

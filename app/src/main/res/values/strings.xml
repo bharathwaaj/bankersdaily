@@ -71,4 +71,8 @@
     <string name="top">Top</string>
     <string name="bottom">Bottom</string>
 
+    <string name="daily_current_affairs">Daily Current Affairs</string>
+    <string name="current_affairs_quiz">Current Affairs Quiz</string>
+    <string name="notification">Notification</string>
+
 </resources>
