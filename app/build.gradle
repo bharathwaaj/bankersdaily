@@ -1,6 +1,10 @@
 apply plugin: 'com.android.application'
 apply plugin: 'org.greenrobot.greendao'
+apply plugin: 'io.fabric'
 
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+}
 android {
     compileSdkVersion 26
     buildToolsVersion '26.0.2'
@@ -67,6 +71,10 @@ dependencies {
 
     // Carousel slider in home fragment
     compile 'com.github.tobiasbuchholz:circularviewpager:1.0.0'
+
+    compile('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
+        transitive = true;
+    }
 
     testCompile 'junit:junit:4.12'
 }

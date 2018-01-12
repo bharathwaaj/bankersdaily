@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.widget.ImageView;
 
+import com.crashlytics.android.Crashlytics;
+
 import junit.framework.Assert;
 
 import java.util.List;
@@ -18,6 +20,7 @@ import in.bankersdaily.R;
 import in.testpress.core.TestpressSdk;
 import in.testpress.core.TestpressSession;
 import in.testpress.exam.TestpressExam;
+import io.fabric.sdk.android.Fabric;
 
 import static in.bankersdaily.ui.LoginActivity.AUTHENTICATE_REQUEST_CODE;
 import static in.bankersdaily.ui.PostDetailFragment.POST_SLUG;
@@ -38,6 +41,7 @@ public class SplashScreenActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         ButterKnife.bind(this);
+        Fabric.with(this, new Crashlytics());
         new Handler().postDelayed(new Runnable() {
 
             @Override
