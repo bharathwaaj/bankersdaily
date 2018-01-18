@@ -63,7 +63,7 @@ public class PostListActivity extends BaseToolBarActivity {
         fragment.setArguments(getIntent().getExtras());
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, fragment)
-                .commit();
+                .commitAllowingStateLoss();
     }
 
     void loadCategory(final String categorySlug) {

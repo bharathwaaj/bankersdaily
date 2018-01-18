@@ -33,6 +33,7 @@ import butterknife.OnClick;
 import in.bankersdaily.R;
 import in.bankersdaily.model.Post;
 import in.bankersdaily.network.ApiClient;
+import in.bankersdaily.network.RetrofitCall;
 import in.bankersdaily.network.RetrofitCallback;
 import in.bankersdaily.network.RetrofitException;
 import in.bankersdaily.util.ViewUtils;
@@ -77,6 +78,9 @@ public class HomePromotionsFragment extends Fragment {
     PromotionPagerAdapter promotionPagerAdapter;
     int noOfItemsLoaded;
     ApiClient apiClient;
+    RetrofitCall<List<Post>> currentAffairsLoader;
+    RetrofitCall<List<Post>> dailyQuizLoader;
+    RetrofitCall<List<Post>> notificationLoader;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -137,85 +141,88 @@ public class HomePromotionsFragment extends Fragment {
     }
 
     public void loadCurrentAffairs() {
-        Post.loadLatest(apiClient, DAILY_CURRENT_AFFAIRS_ID, new RetrofitCallback<List<Post>>() {
-            @Override
-            public void onSuccess(List<Post> posts) {
-                if (getActivity() == null)
-                    return;
-                currentAffairs = posts;
-                promotions.add(posts.get(0));
-                PostSearchListAdapter adapter = new PostSearchListAdapter(getActivity());
-                adapter.setHideCategoryLabel(true);
-                adapter.setItems(posts);
-                currentAffairsListView.setAdapter(adapter);
-                hideProgress();
-            }
+        currentAffairsLoader = Post.loadLatest(apiClient, DAILY_CURRENT_AFFAIRS_ID,
+                new RetrofitCallback<List<Post>>() {
+                    @Override
+                    public void onSuccess(List<Post> posts) {
+                        if (getActivity() == null)
+                            return;
+                        currentAffairs = posts;
+                        promotions.add(posts.get(0));
+                        PostSearchListAdapter adapter = new PostSearchListAdapter(getActivity());
+                        adapter.setHideCategoryLabel(true);
+                        adapter.setItems(posts);
+                        currentAffairsListView.setAdapter(adapter);
+                        hideProgress();
+                    }
 
-            @Override
-            public void onException(RetrofitException exception) {
-                content.setVisibility(View.GONE);
-                emptyView.setVisibility(View.VISIBLE);
-                promotionsView.setVisibility(View.GONE);
-                if (exception.isNetworkError()) {
-                    retryButton.setVisibility(View.VISIBLE);
-                }
-                hideProgress();
-            }
+                    @Override
+                    public void onException(RetrofitException exception) {
+                        content.setVisibility(View.GONE);
+                        emptyView.setVisibility(View.VISIBLE);
+                        promotionsView.setVisibility(View.GONE);
+                        if (exception.isNetworkError()) {
+                            retryButton.setVisibility(View.VISIBLE);
+                        }
+                        hideProgress();
+                    }
         });
     }
 
     public void loadDailyQuiz() {
-        Post.loadLatest(apiClient, CURRENT_AFFAIRS_QUIZ_ID, new RetrofitCallback<List<Post>>() {
-            @Override
-            public void onSuccess(List<Post> posts) {
-                if (getActivity() == null)
-                    return;
-                dailyQuiz = posts;
-                promotions.add(posts.get(0));
-                PostSearchListAdapter adapter = new PostSearchListAdapter(getActivity());
-                adapter.setHideCategoryLabel(true);
-                adapter.setItems(posts);
-                dailyQuizListView.setAdapter(adapter);
-                hideProgress();
-            }
+        dailyQuizLoader = Post.loadLatest(apiClient, CURRENT_AFFAIRS_QUIZ_ID,
+                new RetrofitCallback<List<Post>>() {
+                    @Override
+                    public void onSuccess(List<Post> posts) {
+                        if (getActivity() == null)
+                            return;
+                        dailyQuiz = posts;
+                        promotions.add(posts.get(0));
+                        PostSearchListAdapter adapter = new PostSearchListAdapter(getActivity());
+                        adapter.setHideCategoryLabel(true);
+                        adapter.setItems(posts);
+                        dailyQuizListView.setAdapter(adapter);
+                        hideProgress();
+                    }
 
-            @Override
-            public void onException(RetrofitException exception) {
-                content.setVisibility(View.GONE);
-                emptyView.setVisibility(View.VISIBLE);
-                promotionsView.setVisibility(View.GONE);
-                if (exception.isNetworkError()) {
-                    retryButton.setVisibility(View.VISIBLE);
-                }
-                hideProgress();
-            }
+                    @Override
+                    public void onException(RetrofitException exception) {
+                        content.setVisibility(View.GONE);
+                        emptyView.setVisibility(View.VISIBLE);
+                        promotionsView.setVisibility(View.GONE);
+                        if (exception.isNetworkError()) {
+                            retryButton.setVisibility(View.VISIBLE);
+                        }
+                        hideProgress();
+                    }
         });
     }
 
     public void loadNotifications() {
-        Post.loadLatest(apiClient, NOTIFICATIONS_ID, new RetrofitCallback<List<Post>>() {
-            @Override
-            public void onSuccess(List<Post> posts) {
-                if (getActivity() == null)
-                    return;
-                notifications = new ArrayList<>(posts);
-                promotions.add(posts.get(0));
-                PostSearchListAdapter adapter = new PostSearchListAdapter(getActivity());
-                adapter.setItems(posts);
-                notificationListView.setAdapter(adapter);
-                hideProgress();
-            }
+        notificationLoader = Post.loadLatest(apiClient, NOTIFICATIONS_ID,
+                new RetrofitCallback<List<Post>>() {
+                    @Override
+                    public void onSuccess(List<Post> posts) {
+                        if (getActivity() == null)
+                            return;
+                        notifications = new ArrayList<>(posts);
+                        promotions.add(posts.get(0));
+                        PostSearchListAdapter adapter = new PostSearchListAdapter(getActivity());
+                        adapter.setItems(posts);
+                        notificationListView.setAdapter(adapter);
+                        hideProgress();
+                    }
 
-            @Override
-            public void onException(RetrofitException exception) {
-                content.setVisibility(View.GONE);
-                emptyView.setVisibility(View.VISIBLE);
-                promotionsView.setVisibility(View.GONE);
-                if (exception.isNetworkError()) {
-                    retryButton.setVisibility(View.VISIBLE);
-                }
-                hideProgress();
-            }
+                    @Override
+                    public void onException(RetrofitException exception) {
+                        content.setVisibility(View.GONE);
+                        emptyView.setVisibility(View.VISIBLE);
+                        promotionsView.setVisibility(View.GONE);
+                        if (exception.isNetworkError()) {
+                            retryButton.setVisibility(View.VISIBLE);
+                        }
+                        hideProgress();
+                    }
         });
     }
 
@@ -245,6 +252,7 @@ public class HomePromotionsFragment extends Fragment {
             }
         });
         noOfItemsLoaded = 0;
+        promotions.clear();
         loadCurrentAffairs();
         loadDailyQuiz();
         loadNotifications();
@@ -257,7 +265,7 @@ public class HomePromotionsFragment extends Fragment {
 
     void displayPromotions() {
         promotionsView.setVisibility(View.VISIBLE);
-        promotionPagerAdapter.setItems(promotions);
+        promotionPagerAdapter.setItems(new ArrayList<>(promotions));
         promotionPagerAdapter.notifyDataSetChanged();
         promotionsPager.addOnPageChangeListener(new CircularViewPagerHandler(promotionsPager) {
             @Override
@@ -302,4 +310,11 @@ public class HomePromotionsFragment extends Fragment {
         ViewUtils.setListViewHeightBasedOnItems(listView);
     }
 
+    @Override
+    public void onDestroyView() {
+        currentAffairsLoader.cancel();
+        dailyQuizLoader.cancel();
+        notificationLoader.cancel();
+        super.onDestroyView();
+    }
 }

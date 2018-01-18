@@ -29,7 +29,7 @@ public class RetrofitCallAdapter<T> implements RetrofitCall<T> {
     }
 
     @Override
-    public void enqueue(final RetrofitCallback<T> callback) {
+    public RetrofitCall<T> enqueue(final RetrofitCallback<T> callback) {
         call.enqueue(new Callback<T>() {
             @Override
             public void onResponse(@NonNull final Call<T> call, @NonNull final Response<T> response) {
@@ -69,6 +69,7 @@ public class RetrofitCallAdapter<T> implements RetrofitCall<T> {
                 });
             }
         });
+        return this;
     }
 
     @SuppressWarnings("CloneDoesntCallSuperClone")

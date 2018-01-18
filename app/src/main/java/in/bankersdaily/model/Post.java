@@ -24,6 +24,7 @@ import java.util.Map;
 
 import in.bankersdaily.BankersDailyApp;
 import in.bankersdaily.network.ApiClient;
+import in.bankersdaily.network.RetrofitCall;
 import in.bankersdaily.network.RetrofitCallback;
 
 @Entity
@@ -338,14 +339,14 @@ public class Post implements Parcelable {
         return null;
     }
 
-    public static void loadLatest(ApiClient apiClient, int categoryId,
-                                  RetrofitCallback<List<Post>> callback) {
+    public static RetrofitCall<List<Post>> loadLatest(ApiClient apiClient, int categoryId,
+                                                      RetrofitCallback<List<Post>> callback) {
 
         Map<String, Object> queryParams = new LinkedHashMap<String, Object>();
         queryParams.put(ApiClient.CATEGORY, categoryId);
         queryParams.put(ApiClient.PER_PAGE, 3);
         queryParams.put(ApiClient.EMBED, "1");
-        apiClient.getPosts(ApiClient.POSTS_PATH, queryParams).enqueue(callback);
+        return apiClient.getPosts(ApiClient.POSTS_PATH, queryParams).enqueue(callback);
     }
 
     /** called by internal mechanisms, do not call yourself. */

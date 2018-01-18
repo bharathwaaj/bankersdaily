@@ -84,7 +84,7 @@
 
             </android.support.v7.widget.CardView>
 
-            <include layout="@layout/testpress_empty_view" />
+            <include layout="@layout/empty_view_with_image" />
 
         </RelativeLayout>
 

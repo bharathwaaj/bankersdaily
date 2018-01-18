@@ -8,7 +8,7 @@ public interface RetrofitCall<T> {
 
     void cancel();
 
-    void enqueue(RetrofitCallback<T> callback);
+    RetrofitCall<T> enqueue(RetrofitCallback<T> callback);
 
     RetrofitCall<T> clone();
 

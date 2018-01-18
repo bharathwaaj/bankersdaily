@@ -51,6 +51,9 @@ public class PostSearchListAdapter extends SingleTypeAdapter<Post> {
 
     @Override
     protected void update(final int position, final Post post) {
+        if (activity == null)
+            return;
+
         Glide.with(activity)
                 .load(post.getFeaturedMediaSquare())
                 .placeholder(R.drawable.placeholder_icon)

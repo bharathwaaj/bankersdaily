@@ -34,15 +34,15 @@ import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import in.bankersdaily.R;
 import in.bankersdaily.model.Post;
 import in.bankersdaily.network.ApiClient;
 import in.bankersdaily.network.PostPager;
 import in.bankersdaily.network.RetrofitException;
 import in.bankersdaily.util.SingleTypeAdapter;
-import in.testpress.core.TestpressException;
+import in.bankersdaily.util.ThrowableLoader;
 import in.testpress.ui.HeaderFooterListAdapter;
-import in.testpress.util.ThrowableLoader;
 import in.testpress.util.UIUtils;
 import in.testpress.util.ViewUtils;
 
@@ -56,13 +56,13 @@ public class SearchFragment extends Fragment implements AbsListView.OnScrollList
     @BindView(R.id.empty_description) protected TextView emptyDescView;
     @BindView(R.id.image_view) protected ImageView emptyImageView;
     @BindView(R.id.retry_button) protected Button retryButton;
+    @BindView(R.id.pb_loading) protected ProgressBar progressBar;
+    @BindView(R.id.search_bar) protected EditText searchBar;
+    @BindView(R.id.left_drawable) protected ImageView leftDrawable;
+    @BindView(R.id.right_drawable) protected ImageView rightDrawable;
+    @BindView(R.id.result_list_card) protected CardView resultsLayout;
+    @BindView(android.R.id.list) protected ListView listView;
 
-    private ProgressBar progressBar;
-    private EditText searchBar;
-    private ImageView leftDrawable;
-    private ImageView rightDrawable;
-    private CardView resultsLayout;
-    private ListView listView;
     private View searchLayout;
     String queryText = "";
     private List<Post> items = Collections.emptyList();
@@ -82,21 +82,12 @@ public class SearchFragment extends Fragment implements AbsListView.OnScrollList
 
         ViewGroup view = (ViewGroup) inflater.inflate(R.layout.fragment_search,
                 container, false);
-        
-        progressBar = view.findViewById(R.id.pb_loading);
+
+        ButterKnife.bind(this, view);
         //noinspection ConstantConditions
         UIUtils.setIndeterminateDrawable(getActivity(), progressBar, 4);
-        searchBar = view.findViewById(R.id.search_bar);
-        leftDrawable = view.findViewById(R.id.left_drawable);
-        rightDrawable = view.findViewById(R.id.right_drawable);
-        resultsLayout = view.findViewById(R.id.result_list_card);
-        emptyView = view.findViewById(R.id.empty_container);
-        emptyTitleView = view.findViewById(R.id.empty_title);
-        emptyDescView =  view.findViewById(R.id.empty_description);
-        retryButton = view.findViewById(R.id.retry_button);
-        listView = view.findViewById(android.R.id.list);
         searchLayout = view;
-        view.findViewById(R.id.left_drawable).setOnClickListener(new View.OnClickListener() {
+        leftDrawable.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (searchBar.getText().toString().isEmpty()) {
@@ -108,13 +99,13 @@ public class SearchFragment extends Fragment implements AbsListView.OnScrollList
                 }
             }
         });
-        view.findViewById(R.id.right_drawable).setOnClickListener(new View.OnClickListener() {
+        rightDrawable.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onClickRightDrawable();
             }
         });
-        view.findViewById(R.id.retry_button).setOnClickListener(new View.OnClickListener() {
+        retryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 refreshWithProgress();
@@ -246,7 +237,7 @@ public class SearchFragment extends Fragment implements AbsListView.OnScrollList
                 getListAdapter().removeFooter(loadingLayout);
             }
         }
-        final TestpressException exception = getException(loader);
+        final RetrofitException exception = getException(loader);
         if (exception != null) {
             if (!items.isEmpty()) {
                 Snackbar.make(searchLayout, getErrorMessage(exception), Snackbar.LENGTH_LONG).show();
@@ -311,7 +302,7 @@ public class SearchFragment extends Fragment implements AbsListView.OnScrollList
         }
     }
 
-    private int getErrorMessage(TestpressException exception) {
+    private int getErrorMessage(RetrofitException exception) {
         if(exception.isUnauthenticated()) {
             return R.string.testpress_authentication_failed;
         } else if (exception.isNetworkError()) {
@@ -340,7 +331,7 @@ public class SearchFragment extends Fragment implements AbsListView.OnScrollList
         return (HeaderFooterListAdapter<SingleTypeAdapter<Post>>) listView.getAdapter();
     }
 
-    private TestpressException getException(final Loader<List<Post>> loader) {
+    private RetrofitException getException(final Loader<List<Post>> loader) {
         if (loader instanceof ThrowableLoader) {
             return ((ThrowableLoader<List<Post>>) loader).clearException();
         } else {

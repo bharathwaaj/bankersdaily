@@ -45,6 +45,7 @@ import android.widget.TextView;
 import org.greenrobot.greendao.query.LazyList;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -66,6 +67,7 @@ import in.bankersdaily.model.Post;
 import in.bankersdaily.model.PostDao;
 import in.bankersdaily.network.ApiClient;
 import in.bankersdaily.network.CommentsPager;
+import in.bankersdaily.network.RetrofitCall;
 import in.bankersdaily.network.RetrofitCallback;
 import in.bankersdaily.network.RetrofitException;
 import in.bankersdaily.util.Assert;
@@ -106,6 +108,7 @@ public class PostDetailFragment extends Fragment
     private View rootLayout;
     private String comment = "";
     private List<String> pathSegments;
+    private RetrofitCall<List<Post>> postsLoader;
 
     @BindView(R.id.content) WebView content;
     @BindView(R.id.title) TextView title;
@@ -270,11 +273,14 @@ public class PostDetailFragment extends Fragment
     }
 
     void loadPost(final String postSlug, final String postUrl) {
+        if (getActivity() == null)
+            return;
+
         progressBar.setVisibility(View.VISIBLE);
         Map<String, Object> queryParams = new LinkedHashMap<String, Object>();
         queryParams.put(ApiClient.SLUG, postSlug);
         queryParams.put(ApiClient.EMBED, "1");
-        new ApiClient(getActivity()).getPosts(postUrl, queryParams)
+        postsLoader = new ApiClient(getActivity()).getPosts(postUrl, queryParams)
                 .enqueue(new RetrofitCallback<List<Post>>() {
                     @Override
                     public void onSuccess(List<Post> posts) {
@@ -391,7 +397,9 @@ public class PostDetailFragment extends Fragment
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
             progressBar.setVisibility(View.GONE);
-            if (getActivity() != null && post.getCommentStatus().equals("open")) {
+            if (getActivity() != null && post.getCommentStatus() != null &&
+                    post.getCommentStatus().equals("open")) {
+
                 displayComments();
             }
         }
@@ -440,17 +448,22 @@ public class PostDetailFragment extends Fragment
                 }
             }
 
-            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-            builder.setToolbarColor(ContextCompat.getColor(getActivity(), R.color.colorPrimary));
-            CustomTabsIntent customTabsIntent = builder.build();
-            try {
-                customTabsIntent.launchUrl(getActivity(), Uri.parse(url));
-            } catch (ActivityNotFoundException e) {
-                boolean wrongUrl = !url.startsWith("http://") && !url.startsWith("https://");
-                int message = wrongUrl ? R.string.wrong_url : R.string.browser_not_available;
-                ViewUtils.getAlertDialog(getActivity(), R.string.not_supported, message)
-                        .show();
+            boolean wrongUrl = !url.startsWith("http://") && !url.startsWith("https://");
+            int message;
+            if (!wrongUrl) {
+                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+                builder.setToolbarColor(ContextCompat.getColor(getActivity(), R.color.colorPrimary));
+                CustomTabsIntent customTabsIntent = builder.build();
+                try {
+                    customTabsIntent.launchUrl(getActivity(), Uri.parse(url));
+                    return true;
+                } catch (ActivityNotFoundException e) {
+                    message = R.string.browser_not_available;
+                }
+            } else {
+                message = R.string.wrong_url;
             }
+            ViewUtils.getAlertDialog(getActivity(), R.string.not_supported, message).show();
             return true;
         }
     }
@@ -522,7 +535,7 @@ public class PostDetailFragment extends Fragment
         private int loaderID;
 
         CommentsLoader(PostDetailFragment fragment, int loaderID) {
-            super(fragment.getContext(), null);
+            super(fragment.getContext(), Collections.<Comment>emptyList());
             this.fragment = fragment;
             this.loaderID = loaderID;
         }
@@ -570,6 +583,9 @@ public class PostDetailFragment extends Fragment
 
     @Override
     public void onLoadFinished(Loader<List<Comment>> loader, List<Comment> comments) {
+        if (getActivity() == null)
+            return;
+
         switch (loader.getId()) {
             case PREVIOUS_COMMENTS_LOADER_ID:
                 onPreviousCommentsLoadFinished(loader, comments);
@@ -642,6 +658,9 @@ public class PostDetailFragment extends Fragment
                 }
                 loadNewCommentsLayout.setVisibility(View.VISIBLE);
             } else {
+                if (newCommentsHandler == null) {
+                    newCommentsHandler = new Handler();
+                }
                 newCommentsHandler.postDelayed(runnable, NEW_COMMENT_SYNC_INTERVAL);
             }
             return;
@@ -664,6 +683,9 @@ public class PostDetailFragment extends Fragment
             if (!comments.isEmpty() && !endHasBeenReached) {
                 newCommentsAvailableLabel.setVisibility(View.VISIBLE);
             }
+        }
+        if (newCommentsHandler == null) {
+            newCommentsHandler = new Handler();
         }
         newCommentsHandler.postDelayed(runnable, NEW_COMMENT_SYNC_INTERVAL);
     }
@@ -831,6 +853,7 @@ public class PostDetailFragment extends Fragment
             viewGroup.removeView(content);
         }
         content.destroy();
+        postsLoader.cancel();
         super.onDestroyView();
     }
 
