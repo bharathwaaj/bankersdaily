@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.widget.ImageView;
 
 import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.core.CrashlyticsCore;
 
 import junit.framework.Assert;
 
@@ -16,6 +17,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import in.bankersdaily.BuildConfig;
 import in.bankersdaily.R;
 import in.testpress.core.TestpressSdk;
 import in.testpress.core.TestpressSession;
@@ -41,7 +43,11 @@ public class SplashScreenActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         ButterKnife.bind(this);
-        Fabric.with(this, new Crashlytics());
+        Crashlytics crashlytics = new Crashlytics.Builder()
+                .core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
+                .build();
+
+        Fabric.with(this, crashlytics);
         new Handler().postDelayed(new Runnable() {
 
             @Override
