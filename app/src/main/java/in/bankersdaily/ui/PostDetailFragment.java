@@ -45,7 +45,6 @@ import android.widget.TextView;
 import org.greenrobot.greendao.query.LazyList;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -71,6 +70,7 @@ import in.bankersdaily.network.RetrofitCallback;
 import in.bankersdaily.network.RetrofitException;
 import in.bankersdaily.util.Assert;
 import in.bankersdaily.util.FormatDate;
+import in.bankersdaily.util.Preferences;
 import in.bankersdaily.util.ShareUtil;
 import in.bankersdaily.util.ThrowableLoader;
 import in.bankersdaily.util.ViewUtils;
@@ -79,6 +79,8 @@ import in.testpress.core.TestpressSession;
 import in.testpress.exam.TestpressExam;
 import in.testpress.util.UIUtils;
 
+import static android.app.Activity.RESULT_OK;
+import static in.bankersdaily.ui.LoginActivity.AUTHENTICATE_REQUEST_CODE;
 import static in.bankersdaily.ui.PostListActivity.CATEGORY_SLUG;
 import static in.bankersdaily.util.ThrowableLoader.getException;
 
@@ -102,6 +104,8 @@ public class PostDetailFragment extends Fragment
     private boolean postedNewComment;
     private ApiClient apiClient;
     private View rootLayout;
+    private String comment = "";
+    private List<String> pathSegments;
 
     @BindView(R.id.content) WebView content;
     @BindView(R.id.title) TextView title;
@@ -398,29 +402,21 @@ public class PostDetailFragment extends Fragment
                 return false;
 
             Uri uri = Uri.parse(url);
-            List<String> pathSegments = uri.getPathSegments();
+            pathSegments = uri.getPathSegments();
             if (uri.getHost().equals(getString(R.string.testpress_host_url)) &&
                     ((pathSegments.size() == 2 || pathSegments.size() == 4) &&
                             pathSegments.get(0).equals("exams"))) {
 
                 if (TestpressSdk.hasActiveSession(getActivity())) {
-                    TestpressSession testpressSession =
-                            TestpressSdk.getTestpressSession(getActivity());
-
-                    Assert.assertNotNull("TestpressSession must not be null.", testpressSession);
-                    String slug;
-                    if (pathSegments.size() == 4) {
-                        slug = pathSegments.get(2);
-                    } else {
-                        slug = pathSegments.get(1);
+                    showExamAttemptedState();
+                } else {
+                    if (!comment.isEmpty()) {
+                        // empty comment variable to showExamAttemptedState onActivityResult
+                        comment = "";
                     }
-                    TestpressExam.showExamAttemptedState(
-                            getActivity(),
-                            slug,
-                            testpressSession
-                    );
-                    return true;
+                    checkAuth();
                 }
+                return true;
             }
             if (uri.getHost().equals(getString(R.string.host_url)) && pathSegments.size() > 0) {
                 switch (pathSegments.get(0)) {
@@ -505,6 +501,13 @@ public class PostDetailFragment extends Fragment
             case NEW_COMMENTS_LOADER_ID:
                 if (postedNewComment) {
                     newCommentsLoadingLayout.setVisibility(View.VISIBLE);
+                    // if user posted a comment scroll to the bottom
+                    postDetails.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            postDetails.fullScroll(View.FOCUS_DOWN);
+                        }
+                    });
                 }
                 return new CommentsLoader(this, loaderId);
             default:
@@ -652,14 +655,7 @@ public class PostDetailFragment extends Fragment
         }
         newCommentsLoadingLayout.setVisibility(View.GONE);
         if (postedNewComment) {
-            // if user posted a comment scroll to the bottom
             postedNewComment = false;
-            postDetails.post(new Runnable() {
-                @Override
-                public void run() {
-                    postDetails.fullScroll(View.FOCUS_DOWN);
-                }
-            });
         } else {
             int scrollY = postDetails.getScrollY();
             int scrollViewHeight = postDetails.getHeight();
@@ -678,15 +674,13 @@ public class PostDetailFragment extends Fragment
         if (comment.isEmpty()) {
             return;
         }
-        if (!progressDialog.isShowing()) {
-            progressDialog.show();
-        }
         UIUtils.hideSoftKeyboard(getActivity());
-        //noinspection deprecation
-        postComment(Html.toHtml(new SpannableString(comment))); // Convert to html to support line breaks
+        PostDetailFragment.this.comment = Html.toHtml(new SpannableString(comment));
+        checkAuth();
     }
 
-    void postComment(final String comment) {
+    void postComment() {
+        progressDialog.show();
         Map<String, Object> queryParam = new LinkedHashMap<>();
         queryParam.put(ApiClient.CONTENT, comment);
         queryParam.put(ApiClient.POST_ID, post.getId());
@@ -696,6 +690,7 @@ public class PostDetailFragment extends Fragment
             @Override
             public void onSuccess(CreateCommentResponse response) {
                 commentsEditText.setText("");
+                comment = "";
                 listView.requestLayout();
                 progressDialog.dismiss();
                 Snackbar.make(rootLayout, R.string.comment_posted, Snackbar.LENGTH_SHORT).show();
@@ -722,6 +717,34 @@ public class PostDetailFragment extends Fragment
         });
     }
 
+    private void checkAuth() {
+        if (getActivity() == null)
+            return;
+
+        String wordPressToken = Preferences.getWordPressToken(getActivity());
+        if (!wordPressToken.isEmpty() && TestpressSdk.hasActiveSession(getActivity())) {
+            postComment();
+        } else {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            startActivityForResult(intent, AUTHENTICATE_REQUEST_CODE);
+        }
+    }
+
+    private void showExamAttemptedState() {
+        if (getActivity() == null)
+            return;
+
+        TestpressSession testpressSession = TestpressSdk.getTestpressSession(getActivity());
+        Assert.assertNotNull("TestpressSession must not be null.", testpressSession);
+        String slug;
+        if (pathSegments.size() == 4) {
+            slug = pathSegments.get(2);
+        } else {
+            slug = pathSegments.get(1);
+        }
+        TestpressExam.showExamAttemptedState(getActivity(), slug, testpressSession);
+    }
+
     @OnClick(R.id.scroll_to_button) void scrollTo() {
         if (scrollToDirection.getText().equals(getString(R.string.bottom))) {
             postDetails.fullScroll(View.FOCUS_DOWN);
@@ -739,6 +762,18 @@ public class PostDetailFragment extends Fragment
         return "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, user-scalable=no\" />" +
                 "<link rel=\"stylesheet\" type=\"text/css\" href=\"typebase.css\" />" +
                 "<style>img{display: inline;height: auto;max-width: 100%;}</style>";
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == AUTHENTICATE_REQUEST_CODE && resultCode == RESULT_OK) {
+            if (comment.isEmpty()) {
+                showExamAttemptedState();
+            } else {
+                postComment();
+            }
+        }
     }
 
     @Override

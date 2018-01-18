@@ -7,10 +7,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import in.bankersdaily.R;
-import in.bankersdaily.util.Preferences;
-import in.testpress.core.TestpressSdk;
-
-import static in.bankersdaily.ui.LoginActivity.AUTHENTICATE_REQUEST_CODE;
 
 public class MainActivity extends BaseToolBarActivity {
 
@@ -20,7 +16,7 @@ public class MainActivity extends BaseToolBarActivity {
         setContentView(R.layout.container_layout);
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        checkAuth();
+        displayHomeScreen();
     }
 
     @Override
@@ -28,16 +24,6 @@ public class MainActivity extends BaseToolBarActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.search, menu);
         return true;
-    }
-
-    void checkAuth() {
-        String wordPressToken = Preferences.getWordPressToken(this);
-        if (!wordPressToken.isEmpty() && TestpressSdk.hasActiveSession(this)) {
-            displayHomeScreen();
-        } else {
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivityForResult(intent, AUTHENTICATE_REQUEST_CODE);
-        }
     }
 
     void displayHomeScreen() {
@@ -57,18 +43,6 @@ public class MainActivity extends BaseToolBarActivity {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == AUTHENTICATE_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                displayHomeScreen();
-            } else {
-                finish();
-            }
         }
     }
 

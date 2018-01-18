@@ -71,6 +71,7 @@
                                 android:listSelector="@android:color/transparent"
                                 android:layout_below="@id/daily_current_affairs_label"
                                 android:focusable="false"
+                                android:descendantFocusability="blocksDescendants"
                                 android:divider="@null" />
 
                             <LinearLayout
@@ -126,6 +127,7 @@
                                 android:cacheColorHint="@android:color/transparent"
                                 android:layout_below="@id/current_affairs_quiz_label"
                                 android:focusable="false"
+                                android:descendantFocusability="blocksDescendants"
                                 android:divider="@null" />
 
                             <LinearLayout
@@ -179,6 +181,7 @@
                                 android:layout_height="match_parent"
                                 android:layout_below="@id/notification_label"
                                 android:focusable="false"
+                                android:descendantFocusability="blocksDescendants"
                                 android:listSelector="@android:color/transparent"
                                 android:cacheColorHint="@android:color/transparent"
                                 android:divider="@null" />
