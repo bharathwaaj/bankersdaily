@@ -1,6 +1,7 @@
 package in.bankersdaily.ui;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.text.Html;
 import android.view.View;
@@ -23,12 +24,10 @@ import static in.bankersdaily.ui.PostDetailFragment.POST_SLUG;
 
 public class PostSearchListAdapter extends SingleTypeAdapter<Post> {
 
-    private Activity activity;
     private boolean hideCategoryLabel;
 
     PostSearchListAdapter(Activity activity) {
         super(activity, R.layout.post_search_list_item);
-        this.activity = activity;
     }
 
     @Override
@@ -42,7 +41,7 @@ public class PostSearchListAdapter extends SingleTypeAdapter<Post> {
         if (convertView == null) {
             convertView = super.getView(position, null, parent);
             ViewUtils.setTypeface(new TextView[] { textView(0), textView(1), textView(3) },
-                    TestpressSdk.getRubikRegularFont(activity));
+                    TestpressSdk.getRubikRegularFont(convertView.getContext()));
 
             return convertView;
         }
@@ -51,10 +50,8 @@ public class PostSearchListAdapter extends SingleTypeAdapter<Post> {
 
     @Override
     protected void update(final int position, final Post post) {
-        if (activity == null)
-            return;
-
-        Glide.with(activity)
+        final Context context = view(0).getContext();
+        Glide.with(context)
                 .load(post.getFeaturedMediaSquare())
                 .placeholder(R.drawable.placeholder_icon)
                 .error(R.mipmap.ic_launcher)
@@ -79,9 +76,9 @@ public class PostSearchListAdapter extends SingleTypeAdapter<Post> {
         view(4).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(activity, PostDetailActivity.class);
+                Intent intent = new Intent(context, PostDetailActivity.class);
                 intent.putExtra(POST_SLUG, post.getSlug());
-                activity.startActivity(intent);
+                context.startActivity(intent);
             }
         });
     }

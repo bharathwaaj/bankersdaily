@@ -42,6 +42,7 @@ import in.bankersdaily.network.PostPager;
 import in.bankersdaily.network.RetrofitException;
 import in.bankersdaily.util.SingleTypeAdapter;
 import in.bankersdaily.util.ThrowableLoader;
+import in.testpress.core.TestpressSdk;
 import in.testpress.ui.HeaderFooterListAdapter;
 import in.testpress.util.UIUtils;
 import in.testpress.util.ViewUtils;
@@ -87,6 +88,11 @@ public class SearchFragment extends Fragment implements AbsListView.OnScrollList
         //noinspection ConstantConditions
         UIUtils.setIndeterminateDrawable(getActivity(), progressBar, 4);
         searchLayout = view;
+        ViewUtils.setTypeface(
+                new TextView[] { emptyTitleView, retryButton },
+                TestpressSdk.getRubikMediumFont(view.getContext())
+        );
+        emptyDescView.setTypeface(TestpressSdk.getRubikRegularFont(view.getContext()));
         leftDrawable.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

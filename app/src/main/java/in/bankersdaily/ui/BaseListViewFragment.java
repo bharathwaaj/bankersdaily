@@ -419,7 +419,6 @@ public abstract class BaseListViewFragment<T> extends Fragment
     @Override
     public void onDestroyView() {
         emptyView = null;
-        swipeRefreshLayout = null;
         listView = null;
         super.onDestroyView();
     }

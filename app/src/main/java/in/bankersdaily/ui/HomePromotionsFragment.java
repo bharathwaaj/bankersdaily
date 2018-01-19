@@ -306,15 +306,24 @@ public class HomePromotionsFragment extends Fragment {
     }
 
     void displayCardView(CardView cardView, ListView listView) {
+        if (getActivity() == null || listView == null)
+            return;
+        
         cardView.setVisibility(View.VISIBLE);
         ViewUtils.setListViewHeightBasedOnItems(listView);
     }
 
     @Override
     public void onDestroyView() {
-        currentAffairsLoader.cancel();
-        dailyQuizLoader.cancel();
-        notificationLoader.cancel();
+        if (currentAffairsLoader != null) {
+            currentAffairsLoader.cancel();
+        }
+        if (dailyQuizLoader != null) {
+            dailyQuizLoader.cancel();
+        }
+        if (notificationLoader != null) {
+            notificationLoader.cancel();
+        }
         super.onDestroyView();
     }
 }

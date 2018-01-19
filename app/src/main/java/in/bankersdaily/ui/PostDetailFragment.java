@@ -853,7 +853,9 @@ public class PostDetailFragment extends Fragment
             viewGroup.removeView(content);
         }
         content.destroy();
-        postsLoader.cancel();
+        if (postsLoader != null) {
+            postsLoader.cancel();
+        }
         super.onDestroyView();
     }
 
