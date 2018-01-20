@@ -18,6 +18,7 @@ package in.bankersdaily.util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.support.annotation.StringRes;
@@ -155,6 +156,15 @@ public class ViewUtils {
             listView.setLayoutParams(params);
             listView.requestLayout();
         }
+    }
+
+    public static boolean isTabletDevice(Context context) {
+        int screenLayout = context.getResources().getConfiguration().screenLayout &
+                Configuration.SCREENLAYOUT_SIZE_MASK;
+
+        boolean isScreenLarge = (screenLayout == Configuration.SCREENLAYOUT_SIZE_LARGE);
+        boolean isScreenXlarge = (screenLayout == Configuration.SCREENLAYOUT_SIZE_XLARGE);
+        return (isScreenLarge || isScreenXlarge);
     }
 
     private ViewUtils() {

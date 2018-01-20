@@ -296,7 +296,9 @@ public class HomePromotionsFragment extends Fragment {
     void hideProgress() {
         int noOfItems = 3;
         if(++noOfItemsLoaded == noOfItems) {
-            displayPromotions();
+            if (!ViewUtils.isTabletDevice(getActivity())) {
+                displayPromotions();
+            }
             displayCardView(currentAffairsCardView, currentAffairsListView);
             displayCardView(dailyQuizCardView, dailyQuizListView);
             displayCardView(notificationCardView, notificationListView);
