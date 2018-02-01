@@ -159,6 +159,9 @@ public class ViewUtils {
     }
 
     public static boolean isTabletDevice(Context context) {
+        if (context == null) {
+            return true;
+        }
         int screenLayout = context.getResources().getConfiguration().screenLayout &
                 Configuration.SCREENLAYOUT_SIZE_MASK;
 
