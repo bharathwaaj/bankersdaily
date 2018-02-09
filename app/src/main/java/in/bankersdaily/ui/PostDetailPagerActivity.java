@@ -154,4 +154,9 @@ public class PostDetailPagerActivity extends BaseToolBarActivity {
         }
     }
 
+    @Override
+    protected String getScreenName() {
+        return BankersDailyApp.POST_DETAIL;
+    }
+
 }

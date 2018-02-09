@@ -79,9 +79,17 @@ dependencies {
         transitive = true;
     }
 
+    // MixPanel
+    compile 'com.mixpanel.android:mixpanel-android:5.2.4'
+
+    //  Firebase
+    compile 'com.google.firebase:firebase-core:11.8.0'
+
     testCompile 'junit:junit:4.12'
 }
 
 greendao {
     schemaVersion 3
 }
+
+apply plugin: 'com.google.gms.google-services'

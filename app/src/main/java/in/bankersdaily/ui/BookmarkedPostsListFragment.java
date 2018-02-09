@@ -6,6 +6,7 @@ import android.view.View;
 
 import java.util.List;
 
+import in.bankersdaily.BankersDailyApp;
 import in.bankersdaily.R;
 import in.bankersdaily.model.Post;
 import in.bankersdaily.util.SingleTypeAdapter;
@@ -62,5 +63,10 @@ public class BookmarkedPostsListFragment extends BaseListViewFragment<Post> {
     @Override
     public Loader<List<Post>> onCreateLoader(int id, Bundle args) {
         return null;
+    }
+
+    @Override
+    protected String getScreenName() {
+        return BankersDailyApp.BOOKMARKS_TAB;
     }
 }

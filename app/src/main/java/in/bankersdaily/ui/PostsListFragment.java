@@ -7,6 +7,7 @@ import org.greenrobot.greendao.AbstractDao;
 import java.util.Date;
 import java.util.List;
 
+import in.bankersdaily.BankersDailyApp;
 import in.bankersdaily.R;
 import in.bankersdaily.model.Category;
 import in.bankersdaily.model.CategoryDao;
@@ -152,4 +153,18 @@ public class PostsListFragment extends BaseDBPagedItemFragment<Post, Long> {
         setEmptyText(R.string.no_posts, R.string.no_posts_description, R.drawable.no_news);
     }
 
+    @Override
+    protected String getScreenName() {
+        if (categoryId == 0) {
+            return BankersDailyApp.LATEST_POSTS_TAB;
+        }
+        return "";
+    }
+
+    @Override
+    protected void trackScreenViewAnalytics() {
+        if (categoryId == 0) {
+            super.trackScreenViewAnalytics();
+        }
+    }
 }

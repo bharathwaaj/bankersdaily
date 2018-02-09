@@ -716,6 +716,15 @@ public class PostDetailFragment extends Fragment
                 listView.requestLayout();
                 progressDialog.dismiss();
                 Snackbar.make(rootLayout, R.string.comment_posted, Snackbar.LENGTH_SHORT).show();
+                Bundle bundle = new Bundle();
+                bundle.putString(BankersDailyApp.POST_SLUG, post.getSlug());
+                bundle.putString(BankersDailyApp.COMMENT_ID, response.getCommentId().toString());
+                BankersDailyApp.getInstance().trackEvent(
+                        BankersDailyApp.POST_DETAIL,
+                        BankersDailyApp.COMMENTED,
+                        null,
+                        bundle
+                );
                 if (newCommentsHandler != null) {
                     newCommentsHandler.removeCallbacks(runnable);
                 }
@@ -812,6 +821,11 @@ public class PostDetailFragment extends Fragment
                     drawable.mutate().setColorFilter(ContextCompat.getColor(getActivity(),
                             R.color.actionbar_text), PorterDuff.Mode.SRC_IN);
                 } else {
+                    BankersDailyApp.getInstance().trackEvent(
+                            BankersDailyApp.POST_DETAIL,
+                            BankersDailyApp.BOOKMARKED,
+                            post.getSlug()
+                    );
                     bookmark = new Bookmark(post.getId());
                     daoSession.getBookmarkDao().insertOrReplaceInTx(bookmark);
                     item.setTitle(R.string.unbookmark);
@@ -821,6 +835,11 @@ public class PostDetailFragment extends Fragment
                 item.setIcon(drawable);
                 return true;
             case R.id.share:
+                BankersDailyApp.getInstance().trackEvent(
+                        BankersDailyApp.POST_DETAIL,
+                        BankersDailyApp.SHARED_POST,
+                        post.getSlug()
+                );
                 ShareUtil.shareUrl(getActivity(), post.getTitle(), post.getLink());
                 return true;
         }

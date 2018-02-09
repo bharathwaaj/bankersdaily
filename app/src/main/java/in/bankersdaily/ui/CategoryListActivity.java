@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import junit.framework.Assert;
 
+import in.bankersdaily.BankersDailyApp;
 import in.bankersdaily.R;
 
 public class CategoryListActivity extends BaseToolBarActivity {
@@ -23,4 +24,8 @@ public class CategoryListActivity extends BaseToolBarActivity {
                 .commit();
     }
 
+    @Override
+    protected String getScreenName() {
+        return BankersDailyApp.CATEGORIES_LIST_ACTIVITY;
+    }
 }

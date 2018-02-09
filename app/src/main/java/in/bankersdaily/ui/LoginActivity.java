@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import in.bankersdaily.BankersDailyApp;
 import in.bankersdaily.R;
 import in.bankersdaily.model.LoginResponse;
 import in.bankersdaily.network.ApiClient;
@@ -98,6 +99,11 @@ public class LoginActivity extends BaseToolBarActivity {
                     public void onSuccess(LoginResponse response) {
                         progressDialog.dismiss();
                         if (response.getCookie() == null) {
+                            BankersDailyApp.getInstance().trackEvent(
+                                    getScreenName(),
+                                    BankersDailyApp.EMAIL_NOT_FOUND,
+                                    null
+                            );
                             Snackbar.make(loginView, R.string.email_cannot_retrieve,
                                     Snackbar.LENGTH_LONG).show();
 
@@ -138,6 +144,11 @@ public class LoginActivity extends BaseToolBarActivity {
                     @Override
                     public void onSuccess(TestpressSession response) {
                         if (getCallingActivity() != null) {
+                            BankersDailyApp.getInstance().trackEvent(
+                                    getScreenName(),
+                                    BankersDailyApp.LOGGED_IN,
+                                    null
+                            );
                             setResult(RESULT_OK);
                             finish();
                         }
@@ -164,4 +175,8 @@ public class LoginActivity extends BaseToolBarActivity {
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
+    @Override
+    protected String getScreenName() {
+        return BankersDailyApp.LOGIN_SCREEN;
+    }
 }

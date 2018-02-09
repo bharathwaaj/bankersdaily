@@ -38,7 +38,7 @@ import in.testpress.core.TestpressSdk;
  *
  * @param <T>
  */
-public abstract class BaseListViewFragment<T> extends Fragment
+public abstract class BaseListViewFragment<T> extends BaseFragment
         implements LoaderManager.LoaderCallbacks<List<T>> {
 
     protected static final int LOADER_ID = 0;

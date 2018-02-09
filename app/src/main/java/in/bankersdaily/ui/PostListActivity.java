@@ -138,4 +138,8 @@ public class PostListActivity extends BaseToolBarActivity {
             progressBar.setVisibility(View.GONE);
     }
 
+    @Override
+    protected String getScreenName() {
+        return BankersDailyApp.POSTS_LIST_ACTIVITY;
+    }
 }

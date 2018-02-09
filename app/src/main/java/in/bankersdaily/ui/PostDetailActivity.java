@@ -2,6 +2,7 @@ package in.bankersdaily.ui;
 
 import android.os.Bundle;
 
+import in.bankersdaily.BankersDailyApp;
 import in.bankersdaily.R;
 
 public class PostDetailActivity extends BaseToolBarActivity {
@@ -17,4 +18,8 @@ public class PostDetailActivity extends BaseToolBarActivity {
                 .commit();
     }
 
+    @Override
+    protected String getScreenName() {
+        return BankersDailyApp.POST_DETAIL;
+    }
 }

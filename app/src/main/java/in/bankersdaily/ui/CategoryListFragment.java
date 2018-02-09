@@ -63,4 +63,15 @@ public class CategoryListFragment extends BaseDBListViewFragment<Category, Long>
         setEmptyText(R.string.no_categories, R.string.no_categories_description, R.drawable.no_news);
     }
 
+    @Override
+    protected String getScreenName() {
+        return parentId == 0 ? BankersDailyApp.CATEGORIES_TAB : "";
+    }
+
+    @Override
+    protected void trackScreenViewAnalytics() {
+        if (parentId == 0) {
+            super.trackScreenViewAnalytics();
+        }
+    }
 }

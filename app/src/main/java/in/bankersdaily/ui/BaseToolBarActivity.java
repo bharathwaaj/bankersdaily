@@ -2,10 +2,12 @@ package in.bankersdaily.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import in.bankersdaily.BankersDailyApp;
 import in.bankersdaily.R;
 
 import static in.testpress.core.TestpressSdk.ACTION_PRESSED_HOME;
@@ -18,6 +20,12 @@ import static in.testpress.core.TestpressSdk.ACTION_PRESSED_HOME;
 public abstract class BaseToolBarActivity extends AppCompatActivity {
 
     public static final String ACTIONBAR_TITLE = "title";
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        trackScreenViewAnalytics();
+    }
 
     @Override
     public void setContentView(final int layoutResId) {
@@ -72,6 +80,12 @@ public abstract class BaseToolBarActivity extends AppCompatActivity {
         Bundle bundle = new Bundle();
         bundle.putBoolean(ACTION_PRESSED_HOME, true);
         return bundle;
+    }
+
+    protected abstract String getScreenName();
+
+    protected void trackScreenViewAnalytics() {
+        BankersDailyApp.getInstance().trackScreenView(this, getScreenName());
     }
 
 }

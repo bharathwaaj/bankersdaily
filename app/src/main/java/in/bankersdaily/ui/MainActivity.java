@@ -6,6 +6,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import in.bankersdaily.BankersDailyApp;
 import in.bankersdaily.R;
 
 public class MainActivity extends BaseToolBarActivity {
@@ -46,4 +47,18 @@ public class MainActivity extends BaseToolBarActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        BankersDailyApp.getInstance().submitMixpanelData();
+        super.onDestroy();
+    }
+
+    @Override
+    protected String getScreenName() {
+        return "";
+    }
+
+    @Override
+    protected void trackScreenViewAnalytics() {
+    }
 }

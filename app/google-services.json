@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1009448989316",
+    "firebase_url": "https://bankersdaily-2ecad.firebaseio.com",
+    "project_id": "bankersdaily-2ecad",
+    "storage_bucket": "bankersdaily-2ecad.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1009448989316:android:4b9398e9decc80f3",
+        "android_client_info": {
+          "package_name": "in.bankersdaily.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1009448989316-mlvv7gs6v4e8hf35torod6tqe7v66po3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDLF4dccfwXsyGKnpWsDf8Qw_rcEi0rajw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

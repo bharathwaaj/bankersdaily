@@ -35,6 +35,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import in.bankersdaily.BankersDailyApp;
 import in.bankersdaily.R;
 import in.bankersdaily.model.Post;
 import in.bankersdaily.network.ApiClient;
@@ -47,7 +48,7 @@ import in.testpress.ui.HeaderFooterListAdapter;
 import in.testpress.util.UIUtils;
 import in.testpress.util.ViewUtils;
 
-public class SearchFragment extends Fragment implements AbsListView.OnScrollListener,
+public class SearchFragment extends BaseFragment implements AbsListView.OnScrollListener,
         LoaderManager.LoaderCallbacks<List<Post>> {
     
     private static final int SPEECH_RESULT = 111;
@@ -351,6 +352,11 @@ public class SearchFragment extends Fragment implements AbsListView.OnScrollList
         emptyDescView.setText(description);
         emptyImageView.setImageResource(imageResId);
         retryButton.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    protected String getScreenName() {
+        return BankersDailyApp.SEARCH_SCREEN;
     }
 
     @Override

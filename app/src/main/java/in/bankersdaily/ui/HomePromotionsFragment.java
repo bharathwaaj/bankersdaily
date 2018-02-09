@@ -30,6 +30,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import in.bankersdaily.BankersDailyApp;
 import in.bankersdaily.R;
 import in.bankersdaily.model.Post;
 import in.bankersdaily.network.ApiClient;
@@ -42,7 +43,7 @@ import in.testpress.util.UIUtils;
 
 import static in.bankersdaily.ui.PostListActivity.CATEGORY_SLUG;
 
-public class HomePromotionsFragment extends Fragment {
+public class HomePromotionsFragment extends BaseFragment {
 
     private static final int DAILY_CURRENT_AFFAIRS_ID = 13;
     public static final int CURRENT_AFFAIRS_QUIZ_ID = 111;
@@ -302,6 +303,7 @@ public class HomePromotionsFragment extends Fragment {
             displayCardView(currentAffairsCardView, currentAffairsListView);
             displayCardView(dailyQuizCardView, dailyQuizListView);
             displayCardView(notificationCardView, notificationListView);
+            trackScreenViewAnalytics();
             swipeRefresh.setRefreshing(false);
             scrollView.smoothScrollTo(0, 0);
         }
@@ -313,6 +315,11 @@ public class HomePromotionsFragment extends Fragment {
         
         cardView.setVisibility(View.VISIBLE);
         ViewUtils.setListViewHeightBasedOnItems(listView);
+    }
+
+    @Override
+    protected String getScreenName() {
+        return BankersDailyApp.HOME_TAB;
     }
 
     @Override
