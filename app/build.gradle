@@ -12,7 +12,7 @@ android {
         applicationId "in.bankersdaily.app"
         minSdkVersion 15
         targetSdkVersion 26
-        versionCode 5
+        versionCode 6
         versionName "1.0." + versionCode
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -24,6 +24,9 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    dexOptions {
+        jumboMode true
     }
 }
 
@@ -75,7 +78,7 @@ dependencies {
     // Carousel slider in home fragment
     compile 'com.github.tobiasbuchholz:circularviewpager:1.0.0'
 
-    compile('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
+    compile('com.crashlytics.sdk.android:crashlytics:2.9.0@aar') {
         transitive = true;
     }
 
