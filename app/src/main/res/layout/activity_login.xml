@@ -28,26 +28,44 @@
                 android:src="@drawable/login_screen_image"
                 android:layout_width="wrap_content"
                 android:layout_height="100dp"
-                android:layout_marginBottom="25dp"
                 android:layout_gravity="center_horizontal" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="25dp"
-                    android:orientation="horizontal"
+                    android:layout_marginTop="20dp"
+                    android:orientation="vertical"
                     android:gravity="center" >
 
                     <com.facebook.login.widget.LoginButton
+                        xmlns:facebook="http://schemas.android.com/apk/res-auto"
+                        facebook:com_facebook_login_text="Sign in with Facebook"
                         android:id="@+id/fb_login_button"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:paddingTop="10dp"
                         android:paddingBottom="10dp"
-                        android:paddingLeft="5dp"
-                        android:drawablePadding="10dp"
+                        android:paddingLeft="15dp"
                         android:layout_marginLeft="3dp"
-                        android:layout_marginRight="3dp" />
+                        android:layout_marginRight="3dp"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="15dp"
+                        android:background="#80ffffff"
+                        android:textColor="@color/black_text"
+                        android:textStyle="bold"
+                        android:text="OR"
+                        />
+
+                    <com.google.android.gms.common.SignInButton
+                        android:id="@+id/google_sign_in_button"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        />
 
                 </LinearLayout>
 

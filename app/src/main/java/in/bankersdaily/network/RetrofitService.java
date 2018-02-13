@@ -25,8 +25,10 @@ public interface RetrofitService {
     @GET(ApiClient.CATEGORIES_PATH)
     RetrofitCall<List<Category>> getCategories(@QueryMap Map<String, Object> params);
 
-    @GET(ApiClient.LOGIN_PATH)
-    RetrofitCall<LoginResponse> authenticate(@QueryMap Map<String, Object> params);
+    @GET("{login_url}")
+    RetrofitCall<LoginResponse> authenticate(
+            @Path(value = "login_url", encoded = true) String loginUrlFrag,
+            @QueryMap Map<String, Object> params);
 
     @GET(COMMENTS_PATH)
     RetrofitCall<List<Comment>> getComments(@QueryMap Map<String, Object> params);

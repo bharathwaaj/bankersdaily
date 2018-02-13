@@ -9,6 +9,10 @@
     <string name="facebook_app_id">150335602362077</string>
     <string name="fb_login_protocol_scheme">fb150335602362077</string>
 
+    <string name="server_client_id">1009448989316-mlvv7gs6v4e8hf35torod6tqe7v66po3.apps.googleusercontent.com</string>
+
+    <string name="google_sign_in_wrong_hash">Google sign in error, please contact the administrator to check key hashes.</string>
+
     <string name="network_error">Network Error</string>
     <string name="no_internet_try_again">Please check your internet connection &amp; try again.</string>
     <string name="tap_to_retry">Tap to retry</string>

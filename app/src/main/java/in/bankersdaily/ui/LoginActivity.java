@@ -5,7 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
 
 import com.facebook.AccessToken;
@@ -14,6 +17,14 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -34,6 +45,7 @@ import in.testpress.util.UIUtils;
 
 import static in.bankersdaily.network.ApiClient.ACCESS_TOKEN;
 import static in.bankersdaily.network.ApiClient.COOL;
+import static in.bankersdaily.network.ApiClient.ID_TOKEN;
 import static in.bankersdaily.network.ApiClient.INSECURE;
 import static in.bankersdaily.util.Preferences.KEY_AUTH_SHARED_PREFS;
 import static in.bankersdaily.util.Preferences.KEY_WORDPRESS_TOKEN;
@@ -41,9 +53,13 @@ import static in.bankersdaily.util.Preferences.KEY_WORDPRESS_TOKEN;
 public class LoginActivity extends BaseToolBarActivity {
 
     public static final int AUTHENTICATE_REQUEST_CODE = 1111;
+    public static final int REQUEST_CODE_GOOGLE_SIGN_IN = 2222;
 
     private View loginView;
     private CallbackManager callbackManager;
+    private AccessToken facebookAccessToken;
+    private GoogleApiClient googleApiClient;
+    private GoogleSignInAccount googleSignInAccount;
 
     @SuppressWarnings("ConstantConditions")
     @Override
@@ -57,13 +73,43 @@ public class LoginActivity extends BaseToolBarActivity {
             // Activity started by startActivity
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+        GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(
+                GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .requestIdToken(getString(R.string.server_client_id))
+                .build();
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
+                    @Override
+                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+                        if (connectionResult.getErrorMessage() != null) {
+                            Snackbar.make(loginView, connectionResult.getErrorMessage(),
+                                    Snackbar.LENGTH_LONG).show();
+                        } else {
+                            Snackbar.make(loginView, connectionResult.toString(),
+                                    Snackbar.LENGTH_LONG).show();
+                        }
+                    }
+                })
+                .addApi(Auth.GOOGLE_SIGN_IN_API, googleSignInOptions)
+                .build();
+        SignInButton googleSignInButton = findViewById(R.id.google_sign_in_button);
+        googleSignInButton.setStyle(SignInButton.SIZE_WIDE, SignInButton.COLOR_AUTO);
+        googleSignInButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
+                startActivityForResult(signInIntent, REQUEST_CODE_GOOGLE_SIGN_IN);
+            }
+        });
         callbackManager = CallbackManager.Factory.create();
         LoginButton loginButton = findViewById(R.id.fb_login_button);
         loginButton.setReadPermissions("email");
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                loginToWordPress(loginResult.getAccessToken());
+                facebookAccessToken = loginResult.getAccessToken();
+                loginToWordPress();
             }
 
             @Override
@@ -84,16 +130,23 @@ public class LoginActivity extends BaseToolBarActivity {
         loginView = findViewById(R.id.scroll_view);
     }
 
-    private void loginToWordPress(final AccessToken facebookAccessToken) {
+    private void loginToWordPress() {
         Map<String, Object> queryParams = new LinkedHashMap<String, Object>();
-        queryParams.put(ACCESS_TOKEN, facebookAccessToken.getToken());
+        String url;
+        if (facebookAccessToken != null) {
+            queryParams.put(ACCESS_TOKEN, facebookAccessToken.getToken());
+            url = ApiClient.FB_LOGIN_PATH;
+        } else {
+            queryParams.put(ID_TOKEN, googleSignInAccount.getIdToken());
+            url = ApiClient.GOOGLE_LOGIN_PATH;
+        }
         queryParams.put(INSECURE, COOL);
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getString(R.string.testpress_please_wait));
         progressDialog.setCancelable(false);
         UIUtils.setIndeterminateDrawable(this, progressDialog, 4);
         progressDialog.show();
-        new ApiClient(this).authenticate(queryParams)
+        new ApiClient(this).authenticate(url, queryParams)
                 .enqueue(new RetrofitCallback<LoginResponse>() {
                     @Override
                     public void onSuccess(LoginResponse response) {
@@ -114,8 +167,7 @@ public class LoginActivity extends BaseToolBarActivity {
 
                         editor.putString(KEY_WORDPRESS_TOKEN, response.getCookie());
                         editor.apply();
-                        authenticate(facebookAccessToken.getUserId(), facebookAccessToken.getToken(),
-                                TestpressSdk.Provider.FACEBOOK);
+                        authenticate();
                     }
 
                     @Override
@@ -133,6 +185,27 @@ public class LoginActivity extends BaseToolBarActivity {
                     }
                 });
 
+    }
+
+    private void authenticate() {
+        if (facebookAccessToken != null) {
+            BankersDailyApp.getInstance().trackEvent(
+                    getScreenName(),
+                    BankersDailyApp.LOGGED_IN_VIA_FB,
+                    null
+            );
+            authenticate(facebookAccessToken.getUserId(), facebookAccessToken.getToken(),
+                    TestpressSdk.Provider.FACEBOOK);
+
+        } else if (googleSignInAccount != null) {
+            BankersDailyApp.getInstance().trackEvent(
+                    getScreenName(),
+                    BankersDailyApp.LOGGED_IN_VIA_GOOGLE,
+                    null
+            );
+            authenticate(googleSignInAccount.getId(), googleSignInAccount.getIdToken(),
+                    TestpressSdk.Provider.GOOGLE);
+        }
     }
 
     private void authenticate(String userId, String accessToken, TestpressSdk.Provider provider) {
@@ -172,7 +245,33 @@ public class LoginActivity extends BaseToolBarActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_GOOGLE_SIGN_IN) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            if (result.isSuccess()) {
+                //noinspection ConstantConditions
+                googleSignInAccount = result.getSignInAccount();
+                loginToWordPress();
+            } else if (result.getStatus().getStatusCode() == CommonStatusCodes.NETWORK_ERROR) {
+                showAlert(R.string.no_internet_try_again);
+            } else if (result.getStatus().getStatusCode() == CommonStatusCodes.DEVELOPER_ERROR) {
+                showAlert(R.string.google_sign_in_wrong_hash);
+            } else if (result.getStatus().getStatusCode() == 12501) {
+                Log.e("Google sign in error", "Might be wrong app certificate SHA1");
+                Snackbar.make(loginView, R.string.testpress_some_thing_went_wrong_try_again,
+                        Snackbar.LENGTH_LONG).show();
+            } else {
+                Log.e("Google sign in error", result.getStatus().toString());
+            }
+        } else {
+            callbackManager.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    void showAlert(int message) {
+        new AlertDialog.Builder(this, R.style.TestpressAppCompatAlertDialogStyle)
+                .setMessage(message)
+                .setNeutralButton(R.string.ok, null)
+                .show();
     }
 
     @Override

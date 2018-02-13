@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "1009448989316-jrmjt2b977r2g12mshejpjdl8oa9aeip.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "in.bankersdaily.app",
+            "certificate_hash": "4db80b20893a2eac2f85d9f8266b5d0aee4bbc95"
+          }
+        },
+        {
+          "client_id": "1009448989316-gehvsjqth7dv0f6hkgtjfad3manpllpn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "in.bankersdaily.app",
+            "certificate_hash": "c53ddd6f9c8bf151f77333cb7ae1b4111e6add49"
+          }
+        },
+        {
           "client_id": "1009448989316-mlvv7gs6v4e8hf35torod6tqe7v66po3.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +45,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1009448989316-mlvv7gs6v4e8hf35torod6tqe7v66po3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2

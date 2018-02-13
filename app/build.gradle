@@ -85,6 +85,9 @@ dependencies {
     // MixPanel
     compile 'com.mixpanel.android:mixpanel-android:5.2.4'
 
+    // Google SignIn
+    compile 'com.google.android.gms:play-services-auth:11.8.0'
+
     //  Firebase
     compile 'com.google.firebase:firebase-core:11.8.0'
 

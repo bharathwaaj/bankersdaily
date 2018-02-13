@@ -34,6 +34,8 @@ public class BankersDailyApp extends Application {
     public static final String POST_SLUG = "PostSlug";
     public static final String COMMENT_ID = "Comment";
     public static final String LOGGED_IN = "LoggedIn";
+    public static final String LOGGED_IN_VIA_FB = "LoggedInViaFB";
+    public static final String LOGGED_IN_VIA_GOOGLE = "LoggedInViaGoogle";
     public static final String EMAIL_NOT_FOUND = "EmailNotFound";
     public static final String COMMENTED = "Commented";
     public static final String BOOKMARKED = "Bookmarked";

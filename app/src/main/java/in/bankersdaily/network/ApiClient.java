@@ -38,7 +38,9 @@ public class ApiClient {
 
     static final String CATEGORIES_PATH = "wp-json/wp/v2/categories/";
 
-    static final String LOGIN_PATH = "api/user/fb_connect/";
+    public static final String FB_LOGIN_PATH = "api/user/fb_connect/";
+
+    public static final String GOOGLE_LOGIN_PATH = "api/user/g_connect/";
 
     static final String COMMENTS_PATH = "wp-json/wp/v2/comments/";
 
@@ -61,6 +63,7 @@ public class ApiClient {
     public static final String EMBED = "_embed";
     public static final String SLUG = "slug";
     public static final String ACCESS_TOKEN = "access_token";
+    public static final String ID_TOKEN = "id_token";
     public static final String INSECURE = "insecure";
     public static final String COOL = "cool";
     public static final String POST = "post";
@@ -129,8 +132,8 @@ public class ApiClient {
         return getRetrofitService().getCategories(params);
     }
 
-    public RetrofitCall<LoginResponse> authenticate(Map<String, Object> params) {
-        return getRetrofitService().authenticate(params);
+    public RetrofitCall<LoginResponse> authenticate(String url, Map<String, Object> params) {
+        return getRetrofitService().authenticate(url, params);
     }
 
     public RetrofitCall<List<Comment>> getComments(Map<String, Object> params) {
