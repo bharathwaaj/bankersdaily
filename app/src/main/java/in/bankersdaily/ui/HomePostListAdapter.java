@@ -1,6 +1,5 @@
 package in.bankersdaily.ui;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.text.Html;
@@ -10,10 +9,10 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
-import java.util.List;
+import org.greenrobot.greendao.query.LazyList;
+import org.greenrobot.greendao.query.QueryBuilder;
 
 import in.bankersdaily.R;
-import in.bankersdaily.model.Category;
 import in.bankersdaily.model.Post;
 import in.bankersdaily.util.FormatDate;
 import in.bankersdaily.util.SingleTypeAdapter;
@@ -22,16 +21,43 @@ import in.testpress.core.TestpressSdk;
 
 import static in.bankersdaily.ui.PostDetailFragment.POST_SLUG;
 
-public class PostSearchListAdapter extends SingleTypeAdapter<Post> {
+public class HomePostListAdapter extends SingleTypeAdapter<Post> {
 
-    PostSearchListAdapter(Activity activity) {
-        super(activity, R.layout.post_search_list_item);
+    private QueryBuilder<Post> queryBuilder;
+    private LazyList<Post> posts;
+
+    HomePostListAdapter(Context context, int categoryId) {
+        super(context, R.layout.post_search_list_item);
+        queryBuilder = Post.getPostListQueryBuilder(context, categoryId, false);
+        posts = queryBuilder.listLazy();
+    }
+
+    @Override
+    public int getCount() {
+        int totalPostCount = posts.size();
+        return totalPostCount > 3 ? 3 : totalPostCount;
+    }
+
+    @Override
+    public Post getItem(int position) {
+        return posts.get(position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return getItem(position).getId();
     }
 
     @Override
     protected int[] getChildViewIds() {
         return new int[] { R.id.title, R.id.date, R.id.category_layout, R.id.category,
                 R.id.post_item_layout, R.id.image_view };
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        posts = queryBuilder.listLazy();
+        super.notifyDataSetChanged();
     }
 
     @Override
@@ -57,20 +83,7 @@ public class PostSearchListAdapter extends SingleTypeAdapter<Post> {
 
         setText(0, Html.fromHtml(post.getTitle()));
         setText(1, FormatDate.getAbbreviatedTimeSpan(post.getDate().getTime()));
-        if (post.getCategories().isEmpty()) {
-            setGone(2, true);
-        } else {
-            setGone(2, false);
-            StringBuilder categoryString = new StringBuilder();
-            List<Category> categories = post.getCategories();
-            for (int i = 0; i < categories.size();) {
-                categoryString.append(categories.get(i).getName());
-                if (++i < categories.size()) {
-                    categoryString.append(", ");
-                }
-            }
-            setText(3, categoryString);
-        }
+        setGone(2, true);
         view(4).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
