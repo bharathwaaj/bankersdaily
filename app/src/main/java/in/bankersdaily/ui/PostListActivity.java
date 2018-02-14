@@ -41,6 +41,7 @@ public class PostListActivity extends BaseToolBarActivity {
     @BindView(R.id.retry_button) Button retryButton;
 
     private String title;
+    private CategoryDao categoryDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +49,19 @@ public class PostListActivity extends BaseToolBarActivity {
         setContentView(R.layout.container_layout);
         ButterKnife.bind(this);
         if (getIntent().getStringExtra(CATEGORY_SLUG) != null) {
-            loadCategory(getIntent().getStringExtra(CATEGORY_SLUG));
+            String slug = getIntent().getStringExtra(CATEGORY_SLUG);
+            categoryDao = BankersDailyApp.getDaoSession(PostListActivity.this).getCategoryDao();
+            LazyList<Category> categoriesInDB = categoryDao.queryBuilder()
+                    .where(CategoryDao.Properties.Slug.eq(slug)).listLazy();
+
+            if (categoriesInDB.isEmpty()) {
+                loadCategory(slug);
+            } else {
+                Category category = categoriesInDB.get(0);
+                title = category.getName();
+                getIntent().putExtra(CATEGORY_ID, category.getId().intValue());
+                displayPostsList();
+            }
         } else {
             title = getIntent().getStringExtra(ACTIONBAR_TITLE);
             displayPostsList();
@@ -77,16 +90,7 @@ public class PostListActivity extends BaseToolBarActivity {
                     public void onSuccess(List<Category> categories) {
                         if (!categories.isEmpty()) {
                             Category category = categories.get(0);
-                            CategoryDao categoryDao =
-                                    BankersDailyApp.getDaoSession(PostListActivity.this)
-                                            .getCategoryDao();
-
-                            LazyList<Category> categoriesInDB = categoryDao.queryBuilder()
-                                    .where(CategoryDao.Properties.Id.eq(category.getId())).listLazy();
-
-                            if (categoriesInDB.isEmpty()) {
-                                categoryDao.insertOrReplaceInTx(category);
-                            }
+                            categoryDao.insertOrReplaceInTx(category);
                             title = category.getName();
                             getIntent().putExtra(CATEGORY_ID, category.getId().intValue());
                             progressBar.setVisibility(View.GONE);
