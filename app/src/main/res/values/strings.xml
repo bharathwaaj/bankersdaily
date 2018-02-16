@@ -52,6 +52,23 @@
     <string name="categories">Categories</string>
     <string name="bookmarks">Bookmarks</string>
 
+    <string name="feedback">Feedback</string>
+    <string name="about_us">About Us</string>
+    <string name="contact_us">Contact Us</string>
+    <string name="rate_us">Rate Us</string>
+    <string name="request_feature">Suggest a feature</string>
+    <string name="logout">Logout</string>
+
+    <string name="logout_alert">Are you sure you want to logout?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+    <string name="navigation_drawer_open">Drawer Open</string>
+    <string name="navigation_drawer_close">Drawer Close</string>
+
+    <string name="share_message">Check out this App. I found it useful for Banking preparation https://play.google.com/store/apps/details?id=</string>
+    <string name="press_again_to_exit">Please again to exit</string>
+
     <string name="latest_articles">Latest Articles</string>
     <string name="bookmarked_articles">Bookmarked Articles</string>
 

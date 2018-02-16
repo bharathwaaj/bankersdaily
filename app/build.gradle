@@ -91,6 +91,9 @@ dependencies {
     //  Firebase
     compile 'com.google.firebase:firebase-core:11.8.0'
 
+    // DoorBell
+    compile 'io.doorbell:android-sdk:0.2.7@aar'
+
     testCompile 'junit:junit:4.12'
 }
 

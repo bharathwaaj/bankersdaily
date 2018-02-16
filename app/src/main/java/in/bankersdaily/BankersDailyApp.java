@@ -9,6 +9,8 @@ import android.support.annotation.NonNull;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
+import org.greenrobot.greendao.database.Database;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,15 +36,24 @@ public class BankersDailyApp extends Application {
     public static final String POST_SLUG = "PostSlug";
     public static final String COMMENT_ID = "Comment";
     public static final String LOGGED_IN = "LoggedIn";
+    public static final String LOGGED_OUT = "LoggedOut";
     public static final String LOGGED_IN_VIA_FB = "LoggedInViaFB";
     public static final String LOGGED_IN_VIA_GOOGLE = "LoggedInViaGoogle";
     public static final String EMAIL_NOT_FOUND = "EmailNotFound";
     public static final String COMMENTED = "Commented";
     public static final String BOOKMARKED = "Bookmarked";
     public static final String SHARED_POST = "SharedPost";
+    public static final String SHARED_APP = "SharedApp";
+    public static final String CLICKED_RATE_US = "ClickedRateUs";
+    public static final String SENT_FEEDBACK = "SentFeedBack";
+    public static final String SENT_SUGGESTION = "SentSuggestion";
+    public static final String LOGIN_STATE = "LoginState";
+    public static final String AUTHORIZED = "Authorized";
+    public static final String UNAUTHORIZED = "Unauthorized";
 
     private static BankersDailyApp instance;
 
+    private Database database;
     private DaoSession daoSession;
     private FirebaseAnalytics mFirebaseAnalytics;
     private MixpanelAPI mMixpanel;
@@ -54,7 +65,8 @@ public class BankersDailyApp extends Application {
         instance = this;
 
         DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "bankers-daily-db");
-        daoSession = new DaoMaster(helper.getWritableDb()).newSession();
+        database = helper.getWritableDb();
+        daoSession = new DaoMaster(database).newSession();
 
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         mMixpanel = MixpanelAPI.getInstance(this, MIXPANEL_TOKEN);
@@ -70,6 +82,20 @@ public class BankersDailyApp extends Application {
 
     public static DaoSession getDaoSession(Context context) {
         return ((BankersDailyApp) context.getApplicationContext()).getDaoSession();
+    }
+
+    public void clearDatabase() {
+        DaoMaster.dropAllTables(database, true);
+        DaoMaster.createAllTables(database, true);
+        daoSession.clear();
+    }
+
+    public  void setLoginState(boolean isUserAuthenticated) {
+        Map<String, Object> props = new HashMap<>();
+        String state = isUserAuthenticated ? AUTHORIZED : UNAUTHORIZED;
+        props.put(LOGIN_STATE, state);
+        mMixpanel.registerSuperPropertiesMap(props);
+        mFirebaseAnalytics.setUserProperty(LOGIN_STATE, state);
     }
 
     public void trackEvent(String screenName, String event, String value) {

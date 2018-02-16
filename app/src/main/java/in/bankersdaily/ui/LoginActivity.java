@@ -49,6 +49,7 @@ import static in.bankersdaily.network.ApiClient.ID_TOKEN;
 import static in.bankersdaily.network.ApiClient.INSECURE;
 import static in.bankersdaily.util.Preferences.KEY_AUTH_SHARED_PREFS;
 import static in.bankersdaily.util.Preferences.KEY_WORDPRESS_TOKEN;
+import static in.bankersdaily.util.Preferences.KEY_WORDPRESS_USERNAME;
 
 public class LoginActivity extends BaseToolBarActivity {
 
@@ -166,6 +167,7 @@ public class LoginActivity extends BaseToolBarActivity {
                                 KEY_AUTH_SHARED_PREFS, Context.MODE_PRIVATE).edit();
 
                         editor.putString(KEY_WORDPRESS_TOKEN, response.getCookie());
+                        editor.putString(KEY_WORDPRESS_USERNAME, response.getUserLogin());
                         editor.apply();
                         authenticate();
                     }
@@ -217,12 +219,13 @@ public class LoginActivity extends BaseToolBarActivity {
                 new TestpressCallback<TestpressSession>() {
                     @Override
                     public void onSuccess(TestpressSession response) {
+                        BankersDailyApp.getInstance().setLoginState(true);
+                        BankersDailyApp.getInstance().trackEvent(
+                                getScreenName(),
+                                BankersDailyApp.LOGGED_IN,
+                                null
+                        );
                         if (getCallingActivity() != null) {
-                            BankersDailyApp.getInstance().trackEvent(
-                                    getScreenName(),
-                                    BankersDailyApp.LOGGED_IN,
-                                    null
-                            );
                             setResult(RESULT_OK);
                             finish();
                         }
