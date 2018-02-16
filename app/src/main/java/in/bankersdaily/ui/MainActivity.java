@@ -28,7 +28,9 @@ import in.bankersdaily.BankersDailyApp;
 import in.bankersdaily.R;
 import in.bankersdaily.util.Preferences;
 import in.testpress.core.TestpressSdk;
+import in.testpress.core.TestpressSession;
 import in.testpress.exam.TestpressExam;
+import in.testpress.model.InstituteSettings;
 import io.doorbell.android.Doorbell;
 import io.doorbell.android.callbacks.OnFeedbackSentCallback;
 
@@ -74,6 +76,9 @@ public class MainActivity extends BaseToolBarActivity {
         isUserAuthenticated = checkAuthentication();
         BankersDailyApp.getInstance().setLoginState(isUserAuthenticated);
         navigationView.getMenu().getItem(5).setVisible(isUserAuthenticated);
+        if (isUserAuthenticated) {
+            checkInstituteSettings();
+        }
     }
 
     void initScreen() {
@@ -306,5 +311,18 @@ public class MainActivity extends BaseToolBarActivity {
 
     @Override
     protected void trackScreenViewAnalytics() {
+    }
+
+    void checkInstituteSettings() {
+        // This will fix crash when user comment in review question for users who installed app
+        // version below 1.0.8
+        TestpressSession session = TestpressSdk.getTestpressSession(this);
+        //noinspection ConstantConditions
+        InstituteSettings settings = session.getInstituteSettings();
+        if (settings.isCommentsVotingEnabled() == null) {
+            settings.setCommentsVotingEnabled(false);
+            session.setInstituteSettings(settings);
+            TestpressSdk.setTestpressSession(this, session);
+        }
     }
 }
