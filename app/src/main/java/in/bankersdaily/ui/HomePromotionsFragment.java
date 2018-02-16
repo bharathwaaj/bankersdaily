@@ -171,6 +171,9 @@ public class HomePromotionsFragment extends BaseFragment {
 
                     @Override
                     public void onException(RetrofitException exception) {
+                        if (getActivity() == null)
+                            return;
+                        
                         handleException(exception);
                     }
                 });
