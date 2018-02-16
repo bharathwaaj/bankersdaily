@@ -12,7 +12,7 @@ android {
         applicationId "in.bankersdaily.app"
         minSdkVersion 15
         targetSdkVersion 26
-        versionCode 8
+        versionCode 9
         versionName "1.0." + versionCode
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -91,7 +91,7 @@ dependencies {
     //  Firebase
     compile 'com.google.firebase:firebase-core:11.8.0'
 
-    // DoorBell
+    // DoorBell Feedback
     compile 'io.doorbell:android-sdk:0.2.7@aar'
 
     testCompile 'junit:junit:4.12'
