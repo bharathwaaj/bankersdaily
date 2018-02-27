@@ -148,7 +148,12 @@ public class SplashScreenActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             // Result code OK will come if attempted an exam & back press
-            gotoHome();
+            if (requestCode == AUTHENTICATE_REQUEST_CODE) {
+                Uri uri = getIntent().getData();
+                authenticateUser(uri);
+            } else {
+                gotoHome();
+            }
         } else if (resultCode == RESULT_CANCELED) {
             if (data != null && data.getBooleanExtra(ACTION_PRESSED_HOME, false)) {
                 // Go to home if user pressed home button
