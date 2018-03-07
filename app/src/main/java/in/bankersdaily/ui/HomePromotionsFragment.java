@@ -283,7 +283,7 @@ public class HomePromotionsFragment extends BaseFragment {
     }
 
     void handleException(RetrofitException exception) {
-        if (exception.getMessage().equals("Socket closed")) {
+        if (exception.getMessage() != null && exception.getMessage().equals("Socket closed")) {
             return;
         }
         if (exception.isNetworkError()) {
