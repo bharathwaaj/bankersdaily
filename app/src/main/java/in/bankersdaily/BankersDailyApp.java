@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.onesignal.OneSignal;
 
 import org.greenrobot.greendao.database.Database;
 
@@ -16,6 +17,7 @@ import java.util.Map;
 
 import in.bankersdaily.model.DaoMaster;
 import in.bankersdaily.model.DaoSession;
+import in.bankersdaily.ui.NotificationHandler;
 
 public class BankersDailyApp extends Application {
 
@@ -70,6 +72,14 @@ public class BankersDailyApp extends Application {
 
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         mMixpanel = MixpanelAPI.getInstance(this, MIXPANEL_TOKEN);
+
+        OneSignal.startInit(this)
+                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
+                .unsubscribeWhenNotificationsAreDisabled(true)
+                .setNotificationOpenedHandler(new NotificationHandler(this))
+                .init();
+
+
     }
 
     public static BankersDailyApp getInstance() {
