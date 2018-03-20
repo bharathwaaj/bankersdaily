@@ -79,6 +79,7 @@ import in.bankersdaily.util.ViewUtils;
 import in.testpress.core.TestpressSdk;
 import in.testpress.core.TestpressSession;
 import in.testpress.exam.TestpressExam;
+import in.testpress.store.TestpressStore;
 import in.testpress.util.UIUtils;
 
 import static android.app.Activity.RESULT_OK;
@@ -109,6 +110,7 @@ public class PostDetailFragment extends Fragment
     private String comment = "";
     private List<String> pathSegments;
     private RetrofitCall<List<Post>> postsLoader;
+    private String clickedUrl;
 
     @BindView(R.id.content) WebView content;
     @BindView(R.id.title) TextView title;
@@ -409,63 +411,95 @@ public class PostDetailFragment extends Fragment
             if (getActivity() == null)
                 return false;
 
-            Uri uri = Uri.parse(url);
-            pathSegments = uri.getPathSegments();
-            if (uri.getHost().equals(getString(R.string.testpress_host_url)) &&
-                    ((pathSegments.size() == 2 || pathSegments.size() == 4) &&
-                            pathSegments.get(0).equals("exams"))) {
+            clickedUrl = url;
+            return onClickUrl(clickedUrl);
+        }
 
-                if (TestpressSdk.hasActiveSession(getActivity())) {
-                    showExamAttemptedState();
-                } else {
-                    if (!comment.isEmpty()) {
-                        // empty comment variable to showExamAttemptedState onActivityResult
-                        comment = "";
-                    }
-                    checkAuth();
-                }
-                return true;
-            }
-            if (uri.getHost().equals(getString(R.string.host_url)) && pathSegments.size() > 0) {
+    }
+
+    boolean onClickUrl(String url) {
+        Uri uri = Uri.parse(url);
+        pathSegments = uri.getPathSegments();
+        if (uri.getHost().equals(getString(R.string.testpress_host_url))) {
+            if (TestpressSdk.hasActiveSession(getActivity())) {
+                TestpressSession testpressSession = TestpressSdk.getTestpressSession(getActivity());
+                Assert.assertNotNull("TestpressSession must not be null.", testpressSession);
                 switch (pathSegments.get(0)) {
-                    case "category":
-                        if (pathSegments.size() > 1) {
-                            // If category slug is present, display posts of that category
-                            Intent intent = new Intent(getActivity(), PostListActivity.class);
-                            intent.putExtra(CATEGORY_SLUG, uri.getLastPathSegment());
-                            startActivity(intent);
-                            return true;
+                    case "exams":
+                        String slug;
+                        if (pathSegments.size() == 2) {
+                            slug = pathSegments.get(1);
+                        } else if (pathSegments.size() == 4) {
+                            slug = pathSegments.get(2);
+                        } else {
+                            break;
                         }
-                        break;
+                        // If exam slug is present, directly goto the start exam screen
+                        TestpressExam.showExamAttemptedState(
+                                getActivity(),
+                                slug,
+                                testpressSession
+                        );
+                        return true;
+                    case "products":
+                        if (pathSegments.size() == 2) {
+                            slug = pathSegments.get(1);
+                            TestpressStore.showProduct(getActivity(), slug, testpressSession);
+                        } else {
+                            TestpressStore.show(getActivity(), testpressSession);
+                        }
+                        return true;
                     default:
-                        if (pathSegments.size() == 1) {
-                            Intent intent = new Intent(getActivity(), PostDetailActivity.class);
-                            intent.putExtra(POST_SLUG, pathSegments.get(0));
-                            startActivity(intent);
-                            return true;
-                        }
                         break;
-                }
-            }
-
-            boolean wrongUrl = !url.startsWith("http://") && !url.startsWith("https://");
-            int message;
-            if (!wrongUrl) {
-                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-                builder.setToolbarColor(ContextCompat.getColor(getActivity(), R.color.colorPrimary));
-                CustomTabsIntent customTabsIntent = builder.build();
-                try {
-                    customTabsIntent.launchUrl(getActivity(), Uri.parse(url));
-                    return true;
-                } catch (ActivityNotFoundException e) {
-                    message = R.string.browser_not_available;
                 }
             } else {
-                message = R.string.wrong_url;
+                if (!comment.isEmpty()) {
+                    // empty comment variable to showExamAttemptedState onActivityResult
+                    comment = "";
+                }
+                checkAuth();
+                return true;
             }
-            ViewUtils.getAlertDialog(getActivity(), R.string.not_supported, message).show();
-            return true;
         }
+        if (uri.getHost().equals(getString(R.string.host_url)) && pathSegments.size() > 0) {
+            switch (pathSegments.get(0)) {
+                case "category":
+                    if (pathSegments.size() > 1) {
+                        // If category slug is present, display posts of that category
+                        Intent intent = new Intent(getActivity(), PostListActivity.class);
+                        intent.putExtra(CATEGORY_SLUG, uri.getLastPathSegment());
+                        startActivity(intent);
+                        return true;
+                    }
+                    break;
+                default:
+                    if (pathSegments.size() == 1) {
+                        Intent intent = new Intent(getActivity(), PostDetailActivity.class);
+                        intent.putExtra(POST_SLUG, pathSegments.get(0));
+                        startActivity(intent);
+                        return true;
+                    }
+                    break;
+            }
+        }
+
+        boolean wrongUrl = !url.startsWith("http://") && !url.startsWith("https://");
+        int message;
+        if (!wrongUrl) {
+            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+            builder.setToolbarColor(ContextCompat.getColor(getActivity(), R.color.colorPrimary));
+            CustomTabsIntent customTabsIntent = builder.build();
+            try {
+                customTabsIntent.launchUrl(getActivity(), Uri.parse(url));
+                return true;
+            } catch (ActivityNotFoundException e) {
+                message = R.string.browser_not_available;
+            }
+        } else {
+            message = R.string.wrong_url;
+        }
+        ViewUtils.getAlertDialog(getActivity(), R.string.not_supported, message).show();
+        return true;
     }
 
     void displayComments() {
@@ -761,21 +795,6 @@ public class PostDetailFragment extends Fragment
         }
     }
 
-    private void showExamAttemptedState() {
-        if (getActivity() == null)
-            return;
-
-        TestpressSession testpressSession = TestpressSdk.getTestpressSession(getActivity());
-        Assert.assertNotNull("TestpressSession must not be null.", testpressSession);
-        String slug;
-        if (pathSegments.size() == 4) {
-            slug = pathSegments.get(2);
-        } else {
-            slug = pathSegments.get(1);
-        }
-        TestpressExam.showExamAttemptedState(getActivity(), slug, testpressSession);
-    }
-
     @OnClick(R.id.scroll_to_button) void scrollTo() {
         if (scrollToDirection.getText().equals(getString(R.string.bottom))) {
             postDetails.fullScroll(View.FOCUS_DOWN);
@@ -800,7 +819,7 @@ public class PostDetailFragment extends Fragment
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == AUTHENTICATE_REQUEST_CODE && resultCode == RESULT_OK) {
             if (comment.isEmpty()) {
-                showExamAttemptedState();
+                onClickUrl(clickedUrl);
             } else {
                 postComment();
             }

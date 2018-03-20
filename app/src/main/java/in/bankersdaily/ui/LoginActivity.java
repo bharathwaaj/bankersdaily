@@ -214,7 +214,7 @@ public class LoginActivity extends BaseToolBarActivity {
         InstituteSettings instituteSettings =
                 new InstituteSettings(getString(R.string.testpress_base_url));
 
-        instituteSettings.setCommentsVotingEnabled(false);
+        instituteSettings.setAccessCodeEnabled(true);
         TestpressSdk.initialize(this, instituteSettings, userId, accessToken, provider,
                 new TestpressCallback<TestpressSession>() {
                     @Override

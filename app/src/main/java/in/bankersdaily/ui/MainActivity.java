@@ -26,15 +26,18 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import in.bankersdaily.BankersDailyApp;
 import in.bankersdaily.R;
+import in.bankersdaily.util.Assert;
 import in.bankersdaily.util.Preferences;
 import in.testpress.core.TestpressSdk;
 import in.testpress.core.TestpressSession;
 import in.testpress.exam.TestpressExam;
 import in.testpress.model.InstituteSettings;
+import in.testpress.store.TestpressStore;
 import io.doorbell.android.Doorbell;
 import io.doorbell.android.callbacks.OnFeedbackSentCallback;
 
 import static android.support.design.widget.Snackbar.LENGTH_SHORT;
+import static in.bankersdaily.ui.LoginActivity.AUTHENTICATE_REQUEST_CODE;
 
 public class MainActivity extends BaseToolBarActivity {
 
@@ -75,7 +78,7 @@ public class MainActivity extends BaseToolBarActivity {
     void updateAuthenticationState() {
         isUserAuthenticated = checkAuthentication();
         BankersDailyApp.getInstance().setLoginState(isUserAuthenticated);
-        navigationView.getMenu().getItem(5).setVisible(isUserAuthenticated);
+        navigationView.getMenu().findItem(R.id.logout).setVisible(isUserAuthenticated);
         if (isUserAuthenticated) {
             checkInstituteSettings();
         }
@@ -83,7 +86,7 @@ public class MainActivity extends BaseToolBarActivity {
 
     void initScreen() {
         updateAuthenticationState();
-        selectedItem = 0;
+        selectedItem = R.id.home;
         displayHomeScreen();
     }
 
@@ -96,25 +99,25 @@ public class MainActivity extends BaseToolBarActivity {
         switch(menuItem.getItemId()) {
             case R.id.home:
                 displayHomeScreen();
-                selectedItem = 0;
+                selectedItem = R.id.home;
+                break;
+            case R.id.exams:
+                selectedItem = R.id.exams;
+                showAuthenticatedItem();
+                removeSelectedBackground();
+                break;
+            case R.id.store:
+                selectedItem = R.id.store;
+                showAuthenticatedItem();
+                removeSelectedBackground();
                 break;
             case R.id.feedback:
                 showDoorBellDialog(R.string.feedback);
-                new Handler().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        navigationView.getMenu().getItem(selectedItem).setChecked(true);
-                    }
-                });
+                removeSelectedBackground();
                 break;
             case R.id.request_feature:
                 showDoorBellDialog(R.string.request_feature);
-                new Handler().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        navigationView.getMenu().getItem(selectedItem).setChecked(true);
-                    }
-                });
+                removeSelectedBackground();
                 break;
             case R.id.rate_us:
                 BankersDailyApp.getInstance().trackEvent(
@@ -131,12 +134,7 @@ public class MainActivity extends BaseToolBarActivity {
                     startActivity(new Intent(Intent.ACTION_VIEW,
                             Uri.parse("https://play.google.com/store/apps/details?id=" + getPackageName())));
                 }
-                new Handler().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        navigationView.getMenu().getItem(selectedItem).setChecked(true);
-                    }
-                });
+                removeSelectedBackground();
                 break;
             case R.id.share:
                 BankersDailyApp.getInstance().trackEvent(
@@ -150,12 +148,7 @@ public class MainActivity extends BaseToolBarActivity {
                         getString(R.string.share_message) + getPackageName());
 
                 startActivity(Intent.createChooser(share, "Share with"));
-                new Handler().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        navigationView.getMenu().getItem(selectedItem).setChecked(true);
-                    }
-                });
+                removeSelectedBackground();
                 break;
             case R.id.logout:
                 AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
@@ -169,15 +162,37 @@ public class MainActivity extends BaseToolBarActivity {
                 });
                 builder.setNegativeButton(getResources().getString(R.string.no), null);
                 builder.show();
-                new Handler().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        navigationView.getMenu().getItem(selectedItem).setChecked(true);
-                    }
-                });
+                removeSelectedBackground();
                 break;
         }
         drawerLayout.closeDrawers();
+    }
+
+    void removeSelectedBackground() {
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                navigationView.getMenu().findItem(R.id.home).setChecked(true);
+            }
+        });
+    }
+
+    void showAuthenticatedItem() {
+        if (isUserAuthenticated) {
+            TestpressSession session = TestpressSdk.getTestpressSession(this);
+            Assert.assertNotNull("TestpressSession must not be null.", session);
+            switch (selectedItem) {
+                case R.id.exams:
+                    TestpressExam.show(this, session);
+                    break;
+                case R.id.store:
+                    TestpressStore.show(this, session);
+                    break;
+            }
+        } else {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivityForResult(intent, AUTHENTICATE_REQUEST_CODE);
+        }
     }
 
     void showDoorBellDialog(final int title) {
@@ -254,7 +269,7 @@ public class MainActivity extends BaseToolBarActivity {
         //check drawer is open
         if(drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawers();
-        } else if (selectedItem == 0) { // Backpress from home
+        } else {
             // Backpress twice to exit the app
             if (backPressedOnce) {
                 super.onBackPressed();
@@ -268,11 +283,15 @@ public class MainActivity extends BaseToolBarActivity {
                     backPressedOnce = false;
                 }
             }, 2000);
-        } else {
-            // Backpress  from other fragments will go to home fragment
-            displayHomeScreen();
-            navigationView.getMenu().getItem(0).setChecked(true);
-            selectedItem = 0;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == AUTHENTICATE_REQUEST_CODE && resultCode == RESULT_OK) {
+            updateAuthenticationState();
+            showAuthenticatedItem();
         }
     }
 

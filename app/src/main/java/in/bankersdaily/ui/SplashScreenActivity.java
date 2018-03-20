@@ -22,12 +22,14 @@ import in.bankersdaily.R;
 import in.testpress.core.TestpressSdk;
 import in.testpress.core.TestpressSession;
 import in.testpress.exam.TestpressExam;
+import in.testpress.store.TestpressStore;
 import io.fabric.sdk.android.Fabric;
 
 import static in.bankersdaily.ui.LoginActivity.AUTHENTICATE_REQUEST_CODE;
 import static in.bankersdaily.ui.PostDetailFragment.POST_SLUG;
 import static in.bankersdaily.ui.PostListActivity.CATEGORY_SLUG;
 import static in.testpress.core.TestpressSdk.ACTION_PRESSED_HOME;
+import static in.testpress.store.TestpressStore.CONTINUE_PURCHASE;
 
 public class SplashScreenActivity extends Activity {
 
@@ -63,6 +65,9 @@ public class SplashScreenActivity extends Activity {
                             } else {
                                 gotoHome();
                             }
+                            break;
+                        case "products":
+                            authenticateUser(uri);
                             break;
                         case "category":
                             if (pathSegments.size() > 1) {
@@ -127,6 +132,14 @@ public class SplashScreenActivity extends Activity {
                             testpressSession
                     );
                     break;
+                case "products":
+                    if (pathSegments.size() == 2) {
+                        slug = pathSegments.get(1);
+                        TestpressStore.showProduct(activity, slug, testpressSession);
+                    } else {
+                        TestpressStore.show(activity, testpressSession);
+                    }
+                    break;
                 default:
                     gotoHome();
                     break;
@@ -147,12 +160,23 @@ public class SplashScreenActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            // Result code OK will come if attempted an exam & back press
-            if (requestCode == AUTHENTICATE_REQUEST_CODE) {
-                Uri uri = getIntent().getData();
-                authenticateUser(uri);
-            } else {
-                gotoHome();
+            // Result code OK will come if attempted an exam & back press or user purchased a product
+            switch (requestCode) {
+                case AUTHENTICATE_REQUEST_CODE:
+                    Uri uri = getIntent().getData();
+                    authenticateUser(uri);
+                    break;
+                case TestpressStore.STORE_REQUEST_CODE:
+                    if (data != null && data.getBooleanExtra(CONTINUE_PURCHASE, false)) {
+                        //noinspection ConstantConditions
+                        TestpressStore.show(this, TestpressSdk.getTestpressSession(this));
+                    } else {
+                        gotoHome();
+                    }
+                    break;
+                default:
+                    gotoHome();
+                    break;
             }
         } else if (resultCode == RESULT_CANCELED) {
             if (data != null && data.getBooleanExtra(ACTION_PRESSED_HOME, false)) {
