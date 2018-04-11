@@ -28,10 +28,12 @@ import in.bankersdaily.BankersDailyApp;
 import in.bankersdaily.R;
 import in.bankersdaily.util.Assert;
 import in.bankersdaily.util.Preferences;
+import in.testpress.core.TestpressSDKDatabase;
 import in.testpress.core.TestpressSdk;
 import in.testpress.core.TestpressSession;
+import in.testpress.course.TestpressCourse;
 import in.testpress.exam.TestpressExam;
-import in.testpress.model.InstituteSettings;
+import in.testpress.models.InstituteSettings;
 import in.testpress.store.TestpressStore;
 import io.doorbell.android.Doorbell;
 import io.doorbell.android.callbacks.OnFeedbackSentCallback;
@@ -100,6 +102,11 @@ public class MainActivity extends BaseToolBarActivity {
             case R.id.home:
                 displayHomeScreen();
                 selectedItem = R.id.home;
+                break;
+            case R.id.courses:
+                selectedItem = R.id.courses;
+                showAuthenticatedItem();
+                removeSelectedBackground();
                 break;
             case R.id.exams:
                 selectedItem = R.id.exams;
@@ -182,6 +189,9 @@ public class MainActivity extends BaseToolBarActivity {
             TestpressSession session = TestpressSdk.getTestpressSession(this);
             Assert.assertNotNull("TestpressSession must not be null.", session);
             switch (selectedItem) {
+                case R.id.courses:
+                    TestpressCourse.show(this, session);
+                    break;
                 case R.id.exams:
                     TestpressExam.show(this, session);
                     break;
@@ -240,7 +250,7 @@ public class MainActivity extends BaseToolBarActivity {
     void logout() {
         Preferences.clearAll(this);
         TestpressSdk.clearActiveSession(this);
-        TestpressExam.clearDatabase(this);
+        TestpressSDKDatabase.clearDatabase(this);
         LoginManager.getInstance().logOut();
         BankersDailyApp.getInstance().clearDatabase();
         isUserAuthenticated = false;

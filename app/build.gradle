@@ -42,7 +42,7 @@ android {
 ext {
     supportLib = '27.0.0'
     retrofit = '2.3.0'
-    testpressSDK = '1.1.2'
+    testpressSDK = '1.2.4'
 }
 
 dependencies {
@@ -80,7 +80,11 @@ dependencies {
     // Facebook Login
     compile 'com.facebook.android:facebook-login:4.28.0'
 
-    // Testpress Store & Exam
+    // Testpress Course & Exam
+    compile ('com.github.testpress:course:' + testpressSDK + '@aar') {
+        transitive=true
+    }
+    // Testpress Store
     compile ('com.github.testpress:store:' + testpressSDK + '@aar') {
         transitive=true
     }

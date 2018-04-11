@@ -97,4 +97,7 @@
     <string name="current_affairs_quiz">Current Affairs Quiz</string>
     <string name="notification">Notification</string>
 
+    <string name="testpress_courses">Learn</string>
+    <string name="testpress_no_courses_description">Buy any course from store if available or check back later?</string>
+
 </resources>
