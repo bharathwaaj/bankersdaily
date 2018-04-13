@@ -100,4 +100,6 @@
     <string name="testpress_courses">Learn</string>
     <string name="testpress_no_courses_description">Buy any course from store if available or check back later?</string>
 
+    <string name="testpress_goto_home">Learn</string>
+
 </resources>

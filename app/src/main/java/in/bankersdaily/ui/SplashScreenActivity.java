@@ -11,16 +11,16 @@ import android.widget.ImageView;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
 
-import junit.framework.Assert;
-
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import in.bankersdaily.BuildConfig;
 import in.bankersdaily.R;
+import in.bankersdaily.util.Assert;
 import in.testpress.core.TestpressSdk;
 import in.testpress.core.TestpressSession;
+import in.testpress.course.TestpressCourse;
 import in.testpress.exam.TestpressExam;
 import in.testpress.store.TestpressStore;
 import io.fabric.sdk.android.Fabric;
@@ -167,11 +167,12 @@ public class SplashScreenActivity extends Activity {
                     authenticateUser(uri);
                     break;
                 case TestpressStore.STORE_REQUEST_CODE:
+                    TestpressSession session = TestpressSdk.getTestpressSession(this);
+                    Assert.assertNotNull("TestpressSession must not be null", session);
                     if (data != null && data.getBooleanExtra(CONTINUE_PURCHASE, false)) {
-                        //noinspection ConstantConditions
-                        TestpressStore.show(this, TestpressSdk.getTestpressSession(this));
+                        TestpressStore.show(this, session);
                     } else {
-                        gotoHome();
+                        TestpressCourse.show(this, session);
                     }
                     break;
                 default:

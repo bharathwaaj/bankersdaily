@@ -40,6 +40,8 @@ import io.doorbell.android.callbacks.OnFeedbackSentCallback;
 
 import static android.support.design.widget.Snackbar.LENGTH_SHORT;
 import static in.bankersdaily.ui.LoginActivity.AUTHENTICATE_REQUEST_CODE;
+import static in.testpress.store.TestpressStore.CONTINUE_PURCHASE;
+import static in.testpress.store.TestpressStore.STORE_REQUEST_CODE;
 
 public class MainActivity extends BaseToolBarActivity {
 
@@ -299,9 +301,19 @@ public class MainActivity extends BaseToolBarActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == AUTHENTICATE_REQUEST_CODE && resultCode == RESULT_OK) {
-            updateAuthenticationState();
-            showAuthenticatedItem();
+        if (resultCode == RESULT_OK) {
+            if (requestCode == AUTHENTICATE_REQUEST_CODE) {
+                updateAuthenticationState();
+                showAuthenticatedItem();
+            } else if (requestCode == STORE_REQUEST_CODE) {
+                TestpressSession session = TestpressSdk.getTestpressSession(this);
+                Assert.assertNotNull("TestpressSession must not be null", session);
+                if (data != null && data.getBooleanExtra(CONTINUE_PURCHASE, false)) {
+                    TestpressStore.show(this, session);
+                } else {
+                    TestpressCourse.show(this, session);
+                }
+            }
         }
     }
 
