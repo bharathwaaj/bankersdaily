@@ -42,7 +42,7 @@ android {
 ext {
     supportLib = '27.0.0'
     retrofit = '2.3.0'
-    testpressSDK = '1.2.4'
+    testpressSDK = '1.2.5'
 }
 
 dependencies {
