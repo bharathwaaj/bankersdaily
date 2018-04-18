@@ -420,7 +420,7 @@ public class PostDetailFragment extends Fragment
     boolean onClickUrl(String url) {
         Uri uri = Uri.parse(url);
         pathSegments = uri.getPathSegments();
-        if (uri.getHost().equals(getString(R.string.testpress_host_url))) {
+        if (uri.getHost().equals(getString(R.string.testpress_host_url)) && pathSegments.size() > 0) {
             if (TestpressSdk.hasActiveSession(getActivity())) {
                 TestpressSession testpressSession = TestpressSdk.getTestpressSession(getActivity());
                 Assert.assertNotNull("TestpressSession must not be null.", testpressSession);
