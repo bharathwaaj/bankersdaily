@@ -25,6 +25,7 @@ import com.facebook.login.LoginManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import in.bankersdaily.BankersDailyApp;
+import in.bankersdaily.BuildConfig;
 import in.bankersdaily.R;
 import in.bankersdaily.util.Assert;
 import in.bankersdaily.util.Preferences;
@@ -76,6 +77,9 @@ public class MainActivity extends BaseToolBarActivity {
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 
         drawerLayout.addDrawerListener(drawerToggle);
+        navigationView.getMenu().findItem(R.id.app_version)
+                .setTitle("App Version " + BuildConfig.VERSION_NAME);
+
         initScreen();
     }
 

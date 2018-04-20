@@ -51,4 +51,12 @@
 
     </group>
 
+    <group android:enabled="false" android:checkableBehavior="none">
+
+        <item
+            android:id="@+id/app_version"
+            android:title="V1.0.10" />
+
+    </group>
+
 </menu>
