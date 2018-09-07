@@ -21,6 +21,7 @@ android {
         versionName "1.1." + versionCode
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
+        multiDexEnabled true
         manifestPlaceholders = [onesignal_app_id: "e5aa25b8-9867-46b5-b5b6-7cc92c17c9e0",
                                 // Project number pulled from dashboard, local value is ignored.
                                 onesignal_google_project_number: "REMOTE"]
@@ -110,6 +111,9 @@ dependencies {
 
     // Push Notification
     compile 'com.onesignal:OneSignal:[3.9.2, 3.99.99]'
+
+    // Allow methods more than 64K
+    implementation 'com.android.support:multidex:1.0.3'
 
     testCompile 'junit:junit:4.12'
 }
