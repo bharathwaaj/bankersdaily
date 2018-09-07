@@ -17,8 +17,8 @@ android {
         applicationId "in.bankersdaily.app"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 15
-        versionName "1.0." + versionCode
+        versionCode 16
+        versionName "1.1." + versionCode
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         manifestPlaceholders = [onesignal_app_id: "e5aa25b8-9867-46b5-b5b6-7cc92c17c9e0",
