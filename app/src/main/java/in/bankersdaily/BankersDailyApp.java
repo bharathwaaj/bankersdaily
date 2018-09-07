@@ -18,6 +18,7 @@ import java.util.Map;
 import in.bankersdaily.model.DaoMaster;
 import in.bankersdaily.model.DaoSession;
 import in.bankersdaily.ui.NotificationHandler;
+import in.testpress.models.InstituteSettings;
 
 public class BankersDailyApp extends Application {
 
@@ -136,6 +137,13 @@ public class BankersDailyApp extends Application {
 
     public void submitMixpanelData() {
         mMixpanel.flush();
+    }
+
+    public static void updateInstituteSettings(InstituteSettings instituteSettings) {
+        instituteSettings.setCoursesFrontend(true);
+        instituteSettings.setCoursesGamificationEnabled(true);
+        instituteSettings.setAccessCodeEnabled(true);
+        instituteSettings.setBookmarksEnabled(true);
     }
 
 }

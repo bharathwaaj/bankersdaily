@@ -214,7 +214,7 @@ public class LoginActivity extends BaseToolBarActivity {
         InstituteSettings instituteSettings =
                 new InstituteSettings(getString(R.string.testpress_base_url));
 
-        instituteSettings.setAccessCodeEnabled(true);
+        BankersDailyApp.updateInstituteSettings(instituteSettings);
         TestpressSdk.initialize(this, instituteSettings, userId, accessToken, provider,
                 new TestpressCallback<TestpressSession>() {
                     @Override

@@ -20,6 +20,16 @@
             android:title="@string/testpress_exams" />
 
         <item
+            android:id="@+id/bookmarked_questions"
+            android:icon="@drawable/ic_bookmarked"
+            android:title="@string/bookmarked_questions" />
+
+        <item
+            android:id="@+id/leaderboard"
+            android:icon="@drawable/leaderboard"
+            android:title="@string/testpress_leaderboard" />
+
+        <item
             android:id="@+id/store"
             android:icon="@drawable/ic_store_black_24dp"
             android:title="@string/store" />

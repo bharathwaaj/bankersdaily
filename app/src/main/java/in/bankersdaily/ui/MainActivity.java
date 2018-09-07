@@ -7,6 +7,7 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -110,19 +111,19 @@ public class MainActivity extends BaseToolBarActivity {
                 selectedItem = R.id.home;
                 break;
             case R.id.courses:
-                selectedItem = R.id.courses;
-                showAuthenticatedItem();
-                removeSelectedBackground();
+                handleAuthenticatedItem(R.id.courses);
                 break;
             case R.id.exams:
-                selectedItem = R.id.exams;
-                showAuthenticatedItem();
-                removeSelectedBackground();
+                handleAuthenticatedItem(R.id.exams);
+                break;
+            case R.id.bookmarked_questions:
+                handleAuthenticatedItem(R.id.bookmarked_questions);
+                break;
+            case R.id.leaderboard:
+                handleAuthenticatedItem(R.id.leaderboard);
                 break;
             case R.id.store:
-                selectedItem = R.id.store;
-                showAuthenticatedItem();
-                removeSelectedBackground();
+                handleAuthenticatedItem(R.id.store);
                 break;
             case R.id.feedback:
                 showDoorBellDialog(R.string.feedback);
@@ -190,16 +191,30 @@ public class MainActivity extends BaseToolBarActivity {
         });
     }
 
+    void handleAuthenticatedItem(@IdRes int menuId) {
+        selectedItem = menuId;
+        showAuthenticatedItem();
+        removeSelectedBackground();
+    }
+
     void showAuthenticatedItem() {
         if (isUserAuthenticated) {
             TestpressSession session = TestpressSdk.getTestpressSession(this);
             Assert.assertNotNull("TestpressSession must not be null.", session);
+            InstituteSettings instituteSettings = session.getInstituteSettings();
+            BankersDailyApp.updateInstituteSettings(instituteSettings);
             switch (selectedItem) {
                 case R.id.courses:
                     TestpressCourse.show(this, session);
                     break;
                 case R.id.exams:
                     TestpressExam.show(this, session);
+                    break;
+                case R.id.bookmarked_questions:
+                    TestpressExam.showBookmarks(this, session);
+                    break;
+                case R.id.leaderboard:
+                    TestpressCourse.showLeaderboard(this, session);
                     break;
                 case R.id.store:
                     TestpressStore.show(this, session);
