@@ -48,6 +48,7 @@
 
         <activity android:name=".ui.PostDetailActivity"
             android:label="@string/article"
+            android:windowSoftInputMode="stateHidden"
             android:configChanges="orientation|keyboard|screenSize" />
 
         <activity android:name=".ui.SearchActivity"
