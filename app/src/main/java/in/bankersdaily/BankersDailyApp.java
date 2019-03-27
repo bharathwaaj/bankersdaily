@@ -149,6 +149,7 @@ public class BankersDailyApp extends Application {
     public static void updateInstituteSettings(InstituteSettings instituteSettings) {
         instituteSettings.setCoursesFrontend(true);
         instituteSettings.setCoursesGamificationEnabled(true);
+        instituteSettings.setDisplayUserEmailOnVideo(true);
         instituteSettings.setAccessCodeEnabled(true);
         instituteSettings.setBookmarksEnabled(true);
     }

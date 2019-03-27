@@ -379,10 +379,11 @@ public class MainActivity extends BaseToolBarActivity {
         TestpressSession session = TestpressSdk.getTestpressSession(this);
         //noinspection ConstantConditions
         InstituteSettings settings = session.getInstituteSettings();
+        settings.setDisplayUserEmailOnVideo(true);
         if (settings.isCommentsVotingEnabled() == null) {
             settings.setCommentsVotingEnabled(false);
-            session.setInstituteSettings(settings);
-            TestpressSdk.setTestpressSession(this, session);
         }
+        session.setInstituteSettings(settings);
+        TestpressSdk.setTestpressSession(this, session);
     }
 }
