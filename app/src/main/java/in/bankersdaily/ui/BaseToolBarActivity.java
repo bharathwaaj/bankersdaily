@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import static android.view.WindowManager.LayoutParams.FLAG_SECURE;
 
 import in.bankersdaily.BankersDailyApp;
 import in.bankersdaily.R;
@@ -29,6 +30,7 @@ public abstract class BaseToolBarActivity extends AppCompatActivity {
 
     @Override
     public void setContentView(final int layoutResId) {
+        getWindow().setFlags(FLAG_SECURE, FLAG_SECURE);
         super.setContentView(layoutResId);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

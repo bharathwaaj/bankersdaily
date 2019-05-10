@@ -380,6 +380,7 @@ public class MainActivity extends BaseToolBarActivity {
         //noinspection ConstantConditions
         InstituteSettings settings = session.getInstituteSettings();
         settings.setDisplayUserEmailOnVideo(true);
+        settings.setScreenshotDisabled(true);
         if (settings.isCommentsVotingEnabled() == null) {
             settings.setCommentsVotingEnabled(false);
         }
