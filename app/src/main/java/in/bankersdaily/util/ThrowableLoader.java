@@ -1,8 +1,9 @@
 package in.bankersdaily.util;
 
 import android.content.Context;
-import android.support.v4.content.Loader;
 import android.util.Log;
+
+import androidx.loader.content.Loader;
 
 import java.util.List;
 

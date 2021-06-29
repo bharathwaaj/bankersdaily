@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import org.greenrobot.greendao.query.LazyList;
 import org.greenrobot.greendao.query.QueryBuilder;
@@ -75,10 +76,14 @@ public class HomePostListAdapter extends SingleTypeAdapter<Post> {
     @Override
     protected void update(final int position, final Post post) {
         final Context context = view(0).getContext();
+
+        RequestOptions requestOptions = new RequestOptions();
+        requestOptions.placeholder(R.drawable.placeholder_icon);
+        requestOptions.error(R.mipmap.ic_launcher);
+
         Glide.with(context)
+                .setDefaultRequestOptions(requestOptions)
                 .load(post.getFeaturedMediaSquare())
-                .placeholder(R.drawable.placeholder_icon)
-                .error(R.mipmap.ic_launcher)
                 .into(imageView(5));
 
         setText(0, Html.fromHtml(post.getTitle()));

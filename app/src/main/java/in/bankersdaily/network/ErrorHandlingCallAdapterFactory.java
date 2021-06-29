@@ -1,6 +1,7 @@
 package in.bankersdaily.network;
 
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;

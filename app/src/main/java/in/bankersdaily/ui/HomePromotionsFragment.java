@@ -3,14 +3,6 @@ package in.bankersdaily.ui;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
-import android.support.design.widget.Snackbar;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.NestedScrollView;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +12,15 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.cardview.widget.CardView;
+import androidx.core.widget.NestedScrollView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.viewpager.widget.ViewPager;
+
+import com.google.android.material.snackbar.Snackbar;
 import com.tobishiba.circularviewpager.library.CircularViewPagerHandler;
 
 import org.greenrobot.greendao.query.QueryBuilder;
@@ -48,9 +49,8 @@ import in.testpress.core.TestpressSdk;
 import in.testpress.util.UIUtils;
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
-import static android.support.design.widget.Snackbar.LENGTH_SHORT;
+import static com.google.android.material.snackbar.Snackbar.LENGTH_SHORT;
 import static in.bankersdaily.ui.BaseToolBarActivity.ACTIONBAR_TITLE;
-import static in.bankersdaily.ui.PostListActivity.CATEGORY_SLUG;
 
 public class HomePromotionsFragment extends BaseFragment {
 
@@ -60,13 +60,15 @@ public class HomePromotionsFragment extends BaseFragment {
     public static final int HOME_SLIDER_PREVIEW_PADDING = 50;
 
     @BindView(R.id.horizontal_progress_bar) MaterialProgressBar horizontalProgressBar;
-    @BindView(R.id.promotions_pager) ViewPager promotionsPager;
+    @BindView(R.id.promotions_pager)
+    ViewPager promotionsPager;
     @BindView(R.id.promotions_view) RelativeLayout promotionsView;
     @BindView(R.id.content) LinearLayout content;
     @BindView(R.id.current_affairs_list) ListView currentAffairsListView;
     @BindView(R.id.daily_quiz_list) ListView dailyQuizListView;
     @BindView(R.id.notifications_list) ListView notificationListView;
-    @BindView(R.id.current_affairs_card_view) CardView currentAffairsCardView;
+    @BindView(R.id.current_affairs_card_view)
+    CardView currentAffairsCardView;
     @BindView(R.id.daily_quiz_card_view) CardView notificationCardView;
     @BindView(R.id.notifications_card_view) CardView dailyQuizCardView;
     @BindView(R.id.more_current_affairs_text) TextView moreCurrentAffairsText;
@@ -77,7 +79,8 @@ public class HomePromotionsFragment extends BaseFragment {
     @BindView(R.id.empty_description) protected TextView emptyDescView;
     @BindView(R.id.retry_button) Button retryButton;
     @BindView(R.id.scroll_view) NestedScrollView scrollView;
-    @BindView(R.id.swipe_container) SwipeRefreshLayout swipeRefresh;
+    @BindView(R.id.swipe_container)
+    SwipeRefreshLayout swipeRefresh;
 
     List<Post> promotions = new ArrayList<>();
     PromotionPagerAdapter promotionPagerAdapter;
@@ -115,7 +118,7 @@ public class HomePromotionsFragment extends BaseFragment {
                 TestpressSdk.getRubikMediumFont(view.getContext())
         );
         noOfItemsLoaded = 0;
-        promotionPagerAdapter = new PromotionPagerAdapter(getFragmentManager(), promotions);
+        promotionPagerAdapter = new PromotionPagerAdapter(getChildFragmentManager(), promotions);
         promotionsPager.setAdapter(promotionPagerAdapter);
         setPromotionsHeight();
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -256,7 +259,7 @@ public class HomePromotionsFragment extends BaseFragment {
     }
 
     void displayPromotions() {
-        promotionPagerAdapter.setItems(new ArrayList<>(promotions));
+        promotionPagerAdapter.posts = new ArrayList<>(promotions);
         promotionPagerAdapter.notifyDataSetChanged();
         promotionsPager.addOnPageChangeListener(new CircularViewPagerHandler(promotionsPager) {
             @Override

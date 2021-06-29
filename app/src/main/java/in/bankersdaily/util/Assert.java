@@ -1,6 +1,7 @@
 package in.bankersdaily.util;
 
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 public class Assert {
 

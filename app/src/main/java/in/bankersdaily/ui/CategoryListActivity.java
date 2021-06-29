@@ -2,10 +2,10 @@ package in.bankersdaily.ui;
 
 import android.os.Bundle;
 
-import junit.framework.Assert;
 
 import in.bankersdaily.BankersDailyApp;
 import in.bankersdaily.R;
+import in.bankersdaily.util.Assert;
 
 public class CategoryListActivity extends BaseToolBarActivity {
 

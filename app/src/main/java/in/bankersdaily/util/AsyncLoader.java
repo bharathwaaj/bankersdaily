@@ -1,7 +1,8 @@
 package in.bankersdaily.util;
 
 import android.content.Context;
-import android.support.v4.content.AsyncTaskLoader;
+
+import androidx.loader.content.AsyncTaskLoader;
 
 /**
  * Loader which extends AsyncTaskLoaders and handles caveats as pointed out in
@@ -63,4 +64,6 @@ public abstract class AsyncLoader<D> extends AsyncTaskLoader<D> {
 
         data = null;
     }
+
+    public abstract D loadInBackground();
 }

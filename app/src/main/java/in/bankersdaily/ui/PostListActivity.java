@@ -8,8 +8,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import junit.framework.Assert;
-
 import org.greenrobot.greendao.query.LazyList;
 
 import java.util.LinkedHashMap;
@@ -25,6 +23,7 @@ import in.bankersdaily.model.CategoryDao;
 import in.bankersdaily.network.ApiClient;
 import in.bankersdaily.network.RetrofitCallback;
 import in.bankersdaily.network.RetrofitException;
+import in.bankersdaily.util.Assert;
 
 import static in.bankersdaily.network.ApiClient.SLUG;
 import static in.bankersdaily.ui.PostsListFragment.CATEGORY_ID;

@@ -1,9 +1,10 @@
 package in.bankersdaily.ui;
 
 import android.os.Bundle;
-import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
+
+import androidx.loader.content.Loader;
 
 import org.greenrobot.greendao.AbstractDao;
 

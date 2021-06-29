@@ -10,17 +10,18 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.customtabs.CustomTabsIntent;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.Loader;
-import android.support.v4.widget.NestedScrollView;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.NestedScrollView;
+import androidx.fragment.app.Fragment;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.text.Html;
 import android.text.SpannableString;
 import android.text.format.DateUtils;
@@ -41,6 +42,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import org.greenrobot.greendao.query.LazyList;
 
@@ -128,7 +131,8 @@ public class PostDetailFragment extends Fragment
     @BindView(R.id.comments_layout) LinearLayout commentsLayout;
     @BindView(R.id.loading_previous_comments_layout) LinearLayout previousCommentsLoadingLayout;
     @BindView(R.id.loading_new_comments_layout) LinearLayout newCommentsLoadingLayout;
-    @BindView(R.id.comments_list_view) RecyclerView listView;
+    @BindView(R.id.comments_list_view)
+    RecyclerView listView;
     @BindView(R.id.load_previous_comments_layout) LinearLayout loadPreviousCommentsLayout;
     @BindView(R.id.load_previous_comments) TextView loadPreviousCommentsText;
     @BindView(R.id.load_new_comments_layout) LinearLayout loadNewCommentsLayout;

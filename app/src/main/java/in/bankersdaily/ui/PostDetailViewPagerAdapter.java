@@ -2,11 +2,14 @@ package in.bankersdaily.ui;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentPagerAdapter;
 
 import org.greenrobot.greendao.query.LazyList;
+
+import java.lang.reflect.Field;
 
 import in.bankersdaily.model.Post;
 
@@ -38,5 +41,7 @@ public class PostDetailViewPagerAdapter extends FragmentPagerAdapter {
         fragment.setArguments(bundle);
         return fragment;
     }
+
+
 
 }

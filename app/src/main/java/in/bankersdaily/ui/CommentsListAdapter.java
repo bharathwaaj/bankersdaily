@@ -2,16 +2,15 @@ package in.bankersdaily.ui;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.support.v7.widget.RecyclerView;
 import android.text.Html;
-import android.text.InputType;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Collections;

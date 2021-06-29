@@ -1,6 +1,7 @@
 package in.bankersdaily.ui;
 
-import android.support.v4.app.Fragment;
+
+import androidx.fragment.app.Fragment;
 
 import in.bankersdaily.BankersDailyApp;
 

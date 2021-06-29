@@ -21,8 +21,6 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Point;
 import android.graphics.Typeface;
-import android.support.annotation.StringRes;
-import android.support.v7.app.AlertDialog;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +30,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AlertDialog;
 
 import in.bankersdaily.R;
 

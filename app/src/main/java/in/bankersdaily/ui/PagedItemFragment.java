@@ -3,10 +3,11 @@ package in.bankersdaily.ui;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
+
+import androidx.loader.content.Loader;
 
 import java.util.List;
 

@@ -4,8 +4,9 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.multidex.MultiDex;
+
+import androidx.annotation.NonNull;
+import androidx.multidex.MultiDex;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
@@ -75,12 +76,10 @@ public class BankersDailyApp extends Application {
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         mMixpanel = MixpanelAPI.getInstance(this, MIXPANEL_TOKEN);
 
-        OneSignal.startInit(this)
-                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
-                .unsubscribeWhenNotificationsAreDisabled(true)
-                .setNotificationOpenedHandler(new NotificationHandler(this))
-                .init();
+        OneSignal.initWithContext(this);
 
+        OneSignal.unsubscribeWhenNotificationsAreDisabled(true);
+        OneSignal.setNotificationOpenedHandler(new NotificationHandler(this));
 
     }
 

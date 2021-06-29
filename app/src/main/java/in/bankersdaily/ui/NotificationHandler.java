@@ -4,12 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
-import com.onesignal.OSNotificationOpenResult;
+import com.onesignal.OSNotificationOpenedResult;
 import com.onesignal.OneSignal;
 
 import in.bankersdaily.R;
 
-public class NotificationHandler implements OneSignal.NotificationOpenedHandler {
+public class NotificationHandler implements OneSignal.OSNotificationOpenedHandler {
 
     private Context context;
 
@@ -19,10 +19,9 @@ public class NotificationHandler implements OneSignal.NotificationOpenedHandler 
 
     // This fires when a notification is opened by tapping on it.
     @Override
-    public void notificationOpened(OSNotificationOpenResult result) {
-
+    public void notificationOpened(OSNotificationOpenedResult result) {
         Intent intent;
-        String launchUrl = result.notification.payload.launchURL;
+        String launchUrl = result.getNotification().getLaunchURL();
         Uri uri = Uri.parse(launchUrl);
         if (uri != null && !uri.getHost().equals(context.getString(R.string.host_url))
                 && !uri.getHost().equals(context.getString(R.string.testpress_host_url))) {
@@ -35,5 +34,4 @@ public class NotificationHandler implements OneSignal.NotificationOpenedHandler 
         intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
-
 }

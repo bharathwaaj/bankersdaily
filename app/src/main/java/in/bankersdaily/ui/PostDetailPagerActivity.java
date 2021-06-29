@@ -3,9 +3,11 @@ package in.bankersdaily.ui;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
+
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.viewpager.widget.ViewPager;
+
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -31,7 +33,8 @@ public class PostDetailPagerActivity extends BaseToolBarActivity {
     public static final String POST_POSITION = "postPosition";
     public static final String FILTER_BOOKMARKED = "filterBookmarked";
 
-    @BindView(R.id.viewpager) ViewPager viewPager;
+    @BindView(R.id.viewpager)
+    ViewPager viewPager;
 
     private int categoryId;
     private Menu menu;

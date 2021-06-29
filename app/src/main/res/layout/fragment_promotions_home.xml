@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.SwipeRefreshLayout
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -21,7 +21,7 @@
             app:mpb_useIntrinsicPadding="false"
             style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal" />
 
-        <android.support.v4.widget.NestedScrollView
+        <androidx.core.widget.NestedScrollView
             android:id="@+id/scroll_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -50,15 +50,15 @@
                             android:visibility="gone"
                             android:id="@+id/promotions_view">
 
-                            <android.support.v4.view.ViewPager
+                            <androidx.viewpager.widget.ViewPager
                                 android:id="@+id/promotions_pager"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:overScrollMode="never"/>
+                                android:overScrollMode="never" />
 
                         </RelativeLayout>
 
-                        <android.support.v7.widget.CardView
+                        <androidx.cardview.widget.CardView
                             android:id="@+id/current_affairs_card_view"
                             android:visibility="gone"
                             android:layout_height="wrap_content"
@@ -110,10 +110,9 @@
                                 </LinearLayout>
 
                             </RelativeLayout>
+                        </androidx.cardview.widget.CardView>
 
-                        </android.support.v7.widget.CardView>
-
-                        <android.support.v7.widget.CardView
+                        <androidx.cardview.widget.CardView
                             android:id="@+id/daily_quiz_card_view"
                             android:visibility="gone"
                             android:layout_height="wrap_content"
@@ -167,9 +166,9 @@
 
                             </RelativeLayout>
 
-                        </android.support.v7.widget.CardView>
+                        </androidx.cardview.widget.CardView>
 
-                        <android.support.v7.widget.CardView
+                        <androidx.cardview.widget.CardView
                             android:id="@+id/notifications_card_view"
                             android:visibility="gone"
                             android:layout_height="wrap_content"
@@ -223,15 +222,16 @@
 
                             </RelativeLayout>
 
-                        </android.support.v7.widget.CardView>
+
+                        </androidx.cardview.widget.CardView>
 
                     </LinearLayout>
 
-                   <include layout="@layout/empty_view_with_image" />
+                    <include layout="@layout/empty_view_with_image" />
 
                 </RelativeLayout>
 
             </LinearLayout>
-        </android.support.v4.widget.NestedScrollView>
+        </androidx.core.widget.NestedScrollView>
     </LinearLayout>
-</android.support.v4.widget.SwipeRefreshLayout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

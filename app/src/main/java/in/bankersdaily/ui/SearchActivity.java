@@ -1,7 +1,9 @@
 package in.bankersdaily.ui;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
+
 import static android.view.WindowManager.LayoutParams.FLAG_SECURE;
 
 import in.bankersdaily.R;
