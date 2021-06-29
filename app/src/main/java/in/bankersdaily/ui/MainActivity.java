@@ -15,6 +15,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -112,6 +113,9 @@ public class MainActivity extends BaseToolBarActivity {
     public void selectDrawerItem(MenuItem menuItem) {
         switch(menuItem.getItemId()) {
             case R.id.home:
+                if (selectedItem == R.id.home) {
+                    break;
+                }
                 displayHomeScreen();
                 selectedItem = R.id.home;
                 break;
@@ -344,6 +348,7 @@ public class MainActivity extends BaseToolBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        selectedItem = R.id.home;
         if (!isUserAuthenticated && checkAuthentication()) {
             updateAuthenticationState();
         }
